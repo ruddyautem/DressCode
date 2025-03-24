@@ -10,7 +10,7 @@ import { frFR } from "@clerk/localizations";
 
 export const metadata: Metadata = {
   title: "DressCode - Ruddy Autem",
-  description: "DressCode - Ruddy Autemgithub log",
+  description: "DressCode - Ruddy Autem",
 };
 
 export default async function RootLayout({

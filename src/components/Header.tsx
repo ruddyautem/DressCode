@@ -28,19 +28,19 @@ const Header = () => {
   };
 
   return (
-    <header className='flex flex-wrap justify-between items-center px-4 py-2'>
-      {/* Top Row */}
-      <div className='flex w-full flex-wrap justify-between items-center'>
+    <header className='flex flex-wrap justify-center sm:justify-between px-4 py-2 '>
+      {/* Container centré */}
+      <div className='flex flex-wrap w-full items-center justify-center sm:justify-between gap-4'>
+        {/* Logo */}
         <Link
           href='/'
-          className='text-2xl font-bold text-blue-500 hover:opacity-50 cursor-pointer mx-auto sm:mx-0'
+          className='text-2xl font-bold text-blue-500 hover:opacity-50 cursor-pointer'
         >
           DressCode
         </Link>
-        <Form
-          action='/search'
-          className='w-full sm:w-auto sm:flex-1 sm:mx-4 mt-2 sm:mt-0'
-        >
+
+        {/* Barre de recherche */}
+        <Form action='/search' className='w-full sm:w-auto sm:flex-1 min-w-64'>
           <input
             type='text'
             name='query'
@@ -49,26 +49,26 @@ const Header = () => {
           />
         </Form>
 
-        <div className='flex items-center space-x-4 mt-4 sm:mt-0 flex-1 md:flex-none'>
+        {/* Section utilisateur & panier */}
+        <div className='flex flex-wrap justify-center items-center gap-4 mx-auto'>
+          {/* Panier */}
           <Link
             href='/basket'
-            className='flex-1 relative flex justify-center sm:justify-start sm:flex-none items-center space-x-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
+            className='relative flex items-center space-x-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
           >
             <TrolleyIcon width={24} height={24} />
-            {/* Span item count once global state is implemented */}
-
             <span className='absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs'>
               {itemCount}
             </span>
-
             <span>Panier</span>
           </Link>
+
           {/* User Area */}
           <ClerkLoaded>
             <SignedIn>
               <Link
                 href='/orders'
-                className='flex-1 relative flex justify-center sm:justify-start sm:flex-none items-center space-x-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
+                className='relative flex items-center space-x-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
               >
                 <PackageIcon width={24} height={24} />
                 <span>Commandes</span>
@@ -86,12 +86,13 @@ const Header = () => {
             ) : (
               <SignInButton mode='modal'>Se Connecter</SignInButton>
             )}
+
             {user?.passkeys.length === 0 && (
               <button
                 onClick={createClerkPasskey}
                 className='bg-white hover:bg-blue-700 hover:text-white animate-pulse text-blue-500 font-bold py-2 px-4 rounded border-blue-300 border'
               >
-                Créer une clé de sécurité
+                Créer un Passkey
               </button>
             )}
           </ClerkLoaded>
