@@ -1,8 +1,8 @@
-import { COUPON_CODES } from "@/sanity/lib/sales/couponCodes";
 import { getActiveSaleByCouponCode } from "@/sanity/lib/sales/getActiveSaleByCouponCode";
+import { COUPON_CODES } from "@/sanity/lib/sales/couponCodes";
 
 const Banner = async () => {
-  const sale = await getActiveSaleByCouponCode(COUPON_CODES.HIVER);
+  const sale = await getActiveSaleByCouponCode(COUPON_CODES.ETE);
 
   if (!sale?.isActive) {
     return null;
