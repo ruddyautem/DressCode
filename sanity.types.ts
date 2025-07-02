@@ -282,7 +282,7 @@ export type AllSanitySchemaTypes = SanityImagePaletteSwatch | SanityImagePalette
 export declare const internalGroqTypeReferenceTo: unique symbol;
 // Source: ./src/sanity/lib/orders/getMyOrders.tsx
 // Variable: MY_ORDERS_QUERY
-// Query: *[_type == 'order' && clerkUserId == $userId] | order(orderDate desc){        ..., products[] {            ..., product->        }    }
+// Query: *[_type == 'order' && clerkUserId == $userId] | order(orderDate desc){    ...,     products[] {      ...,       product->    }  }
 export type MY_ORDERS_QUERYResult = Array<{
   _id: string;
   _type: "order";
@@ -654,7 +654,7 @@ export type ACTIVE_SALE_BY_COUPON_QUERYResult = {
 import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
-    "\n    *[_type == 'order' && clerkUserId == $userId] | order(orderDate desc){\n        ..., products[] {\n            ..., product->\n        }\n    }\n    ": MY_ORDERS_QUERYResult;
+    "\n  *[_type == 'order' && clerkUserId == $userId] | order(orderDate desc){\n    ..., \n    products[] {\n      ..., \n      product->\n    }\n  }\n": MY_ORDERS_QUERYResult;
     "*[_type == 'category'] | order(name asc)": ALL_CATEGORIES_QUERYResult;
     "*[_type == 'product'] | order(name asc)": ALL_PRODUCTS_QUERYResult;
     "\n        *[_type == 'product' && slug.current == $slug] | order(name asc)[0]": PRODUCT_BY_ID_QUERYResult;

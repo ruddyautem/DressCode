@@ -1,19 +1,21 @@
-import { Metadata } from "../../../../actions/createCheckoutSession";
+// src/app/(store)/webhook/route.ts
+
 import stripe from "@/lib/stripe";
-import { backendClient } from "@/sanity/lib/backendClient";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
+import { Metadata } from "../../../../actions/createCheckoutSession";
+import { client } from "@/sanity/lib/client";
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.text();
-    const headersList = await headers();
-    const sig = headersList.get("stripe-signature");
+    const sig = (await headers()).get("stripe-signature");
 
-    console.log("HIT WEBHOOK");
+    console.log("🔥 WEBHOOK HIT");
 
     if (!sig) {
+      console.error("❌ No signature provided");
       return NextResponse.json(
         { error: "No signature provided" },
         { status: 400 }
@@ -21,9 +23,8 @@ export async function POST(req: NextRequest) {
     }
 
     const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
-
     if (!webhookSecret) {
-      console.error("Stripe webhook secret is not set");
+      console.error("❌ Stripe webhook secret is not set");
       return NextResponse.json(
         { error: "Webhook secret not configured" },
         { status: 500 }
@@ -33,64 +34,61 @@ export async function POST(req: NextRequest) {
     let event: Stripe.Event;
     try {
       event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
+      console.log("✅ Webhook signature verified");
+      console.log("📨 Event type:", event.type);
     } catch (error) {
-      console.error("Webhook signature verification failed:", error);
+      console.error("❌ Webhook signature verification failed:", error);
       return NextResponse.json(
-        { error: `Invalid payload: ${error instanceof Error ? error.message : String(error)}` },
+        {
+          error: `Invalid payload: ${error instanceof Error ? error.message : String(error)}`,
+        },
         { status: 400 }
       );
     }
 
+    // Handle checkout completion
     if (event.type === "checkout.session.completed") {
       const session = event.data.object as Stripe.Checkout.Session;
-      
-      // Validate required fields
-      if (!session.metadata || !session.customer) {
-        console.error("Missing required metadata or customer");
+      console.log("💳 Processing checkout session:", session.id);
+
+      if (!session.metadata) {
+        console.error("❌ Missing required metadata");
         return NextResponse.json(
-          { error: "Invalid checkout session" },
+          { error: "Invalid checkout session - no metadata" },
           { status: 400 }
         );
       }
 
       try {
         const order = await createOrderInSanity(session);
-        console.log("Order created in Sanity:", order);
+        console.log("✅ Order created in Sanity:", order._id);
         return NextResponse.json({ message: "Order processed successfully" });
       } catch (error) {
-        console.error("Error creating order in Sanity:", error);
-        if (error instanceof Error) {
-          return NextResponse.json(
-            { error: error.message },
-            { status: 500 }
-          );
-        } else {
-          return NextResponse.json(
-            { error: String(error) },
-            { status: 500 }
-          );
-        }
+        console.error("❌ Error creating order in Sanity:", error);
+        return NextResponse.json(
+          { error: error instanceof Error ? error.message : String(error) },
+          { status: 500 }
+        );
       }
     }
 
-    return NextResponse.json({ message: "Unhandled event type" }, { status: 200 });
+    console.log("ℹ️ Unhandled event type:", event.type);
+    return NextResponse.json(
+      { message: "Unhandled event type" },
+      { status: 200 }
+    );
   } catch (error) {
-    console.error("Unexpected error:", error);
-    if (error instanceof Error) {
-      return NextResponse.json(
-        { error: error.message },
-        { status: 500 }
-      );
-    } else {
-      return NextResponse.json(
-        { error: String(error) },
-        { status: 500 }
-      );
-    }
+    console.error("💥 Unexpected error:", error);
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : String(error) },
+      { status: 500 }
+    );
   }
 }
 
 async function createOrderInSanity(session: Stripe.Checkout.Session) {
+  console.log("🔧 Starting createOrderInSanity function");
+
   const {
     id,
     amount_total,
@@ -99,57 +97,82 @@ async function createOrderInSanity(session: Stripe.Checkout.Session) {
     payment_intent,
     customer,
     total_details,
+    payment_status,
   } = session;
 
   const { orderNumber, customerName, customerEmail, clerkUserId } =
     metadata as unknown as Metadata;
 
-  console.log("Metadata:", JSON.stringify(metadata));
-  console.log("Customer ID:", customer);
-  console.log("Payment Intent ID:", payment_intent);
+  console.log("📊 Order details:");
+  console.log("- Order Number:", orderNumber);
+  console.log("- Customer:", customerName);
+  console.log("- Email:", customerEmail);
+  console.log("- Clerk User ID:", clerkUserId);
+  console.log("- Payment Status:", payment_status);
 
   try {
+    // Get line items with product details
     const lineItemsWithProduct = await stripe.checkout.sessions.listLineItems(
       id,
-      { expand: ["data.price.product"] }
+      {
+        expand: ["data.price.product"],
+      }
     );
 
-    console.log("Line Items:", JSON.stringify(lineItemsWithProduct.data));
+    console.log("🛍️ Line items found:", lineItemsWithProduct.data.length);
 
-    const sanityProducts = lineItemsWithProduct.data.map((item) => ({
-      _key: crypto.randomUUID(),
-      product: {
-        _type: "reference",
-        _ref: (item.price?.product as Stripe.Product)?.metadata?.id,
-      },
-      quantity: item.quantity || 0,
-    }));
+    // Transform to Sanity format
+    const sanityProducts = lineItemsWithProduct.data.map((item) => {
+      const sanityProductId = (item.price?.product as Stripe.Product)?.metadata?.sanityProductId;
+      console.log("📦 Sanity Product ID:", sanityProductId, "Quantity:", item.quantity);
 
-    console.log("Sanity Products:", JSON.stringify(sanityProducts));
+      return {
+        _key: Math.random().toString(36).substr(2, 9),
+        product: {
+          _type: "reference",
+          _ref: sanityProductId,
+        },
+        quantity: item.quantity || 0,
+      };
+    });
 
-    const order = await backendClient.create({
+    // Determine order status based on payment status
+    let orderStatus = "pending"; // Default to "À payer"
+    if (payment_status === "paid") {
+      orderStatus = "paid"; // "Payé"
+    } else if (payment_status === "unpaid") {
+      orderStatus = "pending"; // "À payer"
+    }
+
+    // Create order in Sanity
+    const orderData = {
       _type: "order",
       orderNumber,
       stripeCheckoutSessionId: id,
       stripePaymentIntentId: payment_intent,
       customerName,
-      stripeCustomerId: customer,
-      clerkUserId: clerkUserId,
       email: customerEmail,
+      stripeCustomerId: customer,
+      clerkUserId,
       currency,
       amountDiscount: total_details?.amount_discount
         ? total_details.amount_discount / 100
         : 0,
       products: sanityProducts,
       totalPrice: amount_total ? amount_total / 100 : 0,
-      status: "paid",
+      status: orderStatus,
       orderDate: new Date().toISOString(),
-    });
+    };
 
-    console.log("Order created successfully:", JSON.stringify(order));
+    console.log("💾 Creating order in Sanity with data:");
+    console.log(JSON.stringify(orderData, null, 2));
+
+    const order = await client.create(orderData);
+
+    console.log("✅ Order created successfully in Sanity:", order._id);
     return order;
   } catch (error) {
-    console.error("Failed to create order in Sanity:", error);
+    console.error("💥 Failed to create order in Sanity:", error);
     throw error;
   }
 }

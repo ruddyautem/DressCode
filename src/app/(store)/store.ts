@@ -21,48 +21,41 @@ const useBasketStore = create<BasketState>()(
   persist(
     (set, get) => ({
       items: [],
+      
       addItem: (product) =>
         set((state) => {
-          const existingItem = state.items.find(
-            (item) => item.product._id === product._id
-          );
-          if (existingItem) {
-            return {
-              items: state.items.map((item) =>
-                item.product._id === product._id
-                  ? { ...item, quantity: item.quantity + 1 }
-                  : item
-              ),
-            };
-          } else {
-            return { items: [...state.items, { product, quantity: 1 }] };
+          const existingIndex = state.items.findIndex(item => item.product._id === product._id);
+          
+          if (existingIndex >= 0) {
+            const newItems = [...state.items];
+            newItems[existingIndex].quantity += 1;
+            return { items: newItems };
           }
+          
+          return { items: [...state.items, { product, quantity: 1 }] };
         }),
 
       removeItem: (productId) =>
         set((state) => ({
-          items: state.items.reduce((acc, item) => {
-            if (item.product._id === productId) {
-              if (item.quantity > 1) {
-                acc.push({ ...item, quantity: item.quantity - 1 });
-              }
-            } else {
-              acc.push(item);
-            }
-            return acc;
-          }, [] as BasketItem[]),
+          items: state.items
+            .map(item => 
+              item.product._id === productId 
+                ? { ...item, quantity: item.quantity - 1 }
+                : item
+            )
+            .filter(item => item.quantity > 0)
         })),
+
       clearBasket: () => set({ items: [] }),
-      getTotalPrice: () => {
-        return get().items.reduce(
-          (total, item) => total + (item.product.price ?? 0) * item.quantity,
-          0
-        );
-      },
-      getItemCount: (productId) => {
-        const item = get().items.find((item) => item.product._id === productId);
-        return item ? item.quantity : 0;
-      },
+
+      getTotalPrice: () =>
+        get().items.reduce((total, item) => 
+          total + (item.product.price ?? 0) * item.quantity, 0
+        ),
+
+      getItemCount: (productId) =>
+        get().items.find(item => item.product._id === productId)?.quantity ?? 0,
+
       getGroupedItems: () => get().items,
     }),
     { name: "basket-store" }

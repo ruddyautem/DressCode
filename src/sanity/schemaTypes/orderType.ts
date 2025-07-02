@@ -1,3 +1,4 @@
+// src/sanity/schemaTypes/orderType.ts
 import { BasketIcon } from "@sanity/icons";
 import { defineArrayMember, defineField, defineType } from "sanity";
 
@@ -9,7 +10,7 @@ export const orderType = defineType({
   fields: [
     defineField({
       name: "orderNumber",
-      title: "order Number",
+      title: "Order Number",
       type: "string",
       validation: (Rule) => Rule.required(),
     }),
@@ -22,7 +23,6 @@ export const orderType = defineType({
       name: "stripeCustomerId",
       title: "Stripe Customer ID",
       type: "string",
-      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: "clerkUserId",
@@ -46,7 +46,6 @@ export const orderType = defineType({
       name: "stripePaymentIntentId",
       title: "Stripe Payment Intent ID",
       type: "string",
-      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: "products",
@@ -58,7 +57,7 @@ export const orderType = defineType({
           fields: [
             defineField({
               name: "product",
-              title: "product Bought",
+              title: "Product Bought",
               type: "reference",
               to: [{ type: "product" }],
             }),
@@ -74,7 +73,6 @@ export const orderType = defineType({
               quantity: "quantity",
               image: "product.image",
               price: "product.price",
-              currency: "product.currency",
             },
             prepare(select) {
               return {
@@ -89,7 +87,7 @@ export const orderType = defineType({
     }),
     defineField({
       name: "totalPrice",
-      title: "Total price",
+      title: "Total Price",
       type: "number",
       validation: (Rule) => Rule.required().min(0),
     }),
@@ -103,7 +101,7 @@ export const orderType = defineType({
       name: "amountDiscount",
       title: "Amount Discount",
       type: "number",
-      validation: (Rule) => Rule.required().min(0),
+      validation: (Rule) => Rule.min(0),
     }),
     defineField({
       name: "status",
@@ -111,13 +109,14 @@ export const orderType = defineType({
       type: "string",
       options: {
         list: [
-          { title: "pending", value: "pending" },
-          { title: "paid", value: "paid" },
-          { title: "Shipped", value: "shipped" },
-          { title: "Delivered", value: "delivered" },
-          { title: "Cancelled", value: "cancelled" },
+          { title: "À payer", value: "pending" },
+          { title: "Payé", value: "paid" },
+          { title: "Expédié", value: "shipped" },
+          { title: "Livré", value: "delivered" },
+          { title: "Annulé", value: "cancelled" },
         ],
       },
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: "orderDate",
@@ -137,8 +136,8 @@ export const orderType = defineType({
     prepare(select) {
       const orderIdSnippet = `${select.orderId.slice(0, 5)}...${select.orderId.slice(-5)}`;
       return {
-        title: `${select.name}(${orderIdSnippet})`,
-        subtitle: `${select.amount}(${select.currency}, ${select.email})`,
+        title: `${select.name} (${orderIdSnippet})`,
+        subtitle: `${select.amount} ${select.currency} - ${select.email}`,
         media: BasketIcon,
       };
     },
