@@ -32,36 +32,36 @@ function validateItemPrices(items: GroupedBasketItem[]): void {
   }
 }
 
-async function findOrCreateCustomer(email: string): Promise<string | undefined> {
+async function findOrCreateCustomer(
+  email: string
+): Promise<string | undefined> {
   const customers = await stripe.customers.list({
     email,
     limit: STRIPE_CONFIG.customerSearchLimit,
   });
-
   return customers.data.length > 0 ? customers.data[0].id : undefined;
 }
 
 function getBaseURL(): string {
-  return process.env.NODE_ENV === "production"
-    ? `https://${process.env.VERCEL_URL}`
-    : process.env.NEXT_PUBLIC_BASE_URL!;
+  return process.env.NEXT_PUBLIC_BASE_URL!;
 }
 
 // In createCheckoutSession.ts, update the createLineItems function:
-
 function createLineItems(items: GroupedBasketItem[]) {
   return items.map((item) => ({
     price_data: {
       currency: STRIPE_CONFIG.currency,
-      unit_amount: Math.round(item.product.price! * STRIPE_CONFIG.centsToDollarMultiplier),
+      unit_amount: Math.round(
+        item.product.price! * STRIPE_CONFIG.centsToDollarMultiplier
+      ),
       product_data: {
         name: item.product.name || "Unnamed Product",
         description: `Product ID: ${item.product._id}`,
-        metadata: { 
-          sanityProductId: item.product._id  // Use the Sanity product ID
+        metadata: {
+          sanityProductId: item.product._id, // Use the Sanity product ID
         },
-        images: item.product.image 
-          ? [imageUrl(item.product.image).url()] 
+        images: item.product.image
+          ? [imageUrl(item.product.image).url()]
           : undefined,
       },
     },
