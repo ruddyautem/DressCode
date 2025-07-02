@@ -88,5 +88,12 @@ jobs:
             pm2 save
             pm2 status
             
-            # Show recent logs for verification
-            pm2 logs dresscode --lines 10
+            # Show recent logs WITHOUT tailing (fixed)
+            echo "=== Recent Error Logs ==="
+            pm2 logs dresscode --err --lines 5 --nostream
+            echo "=== Recent Output Logs ==="
+            pm2 logs dresscode --out --lines 5 --nostream
+            
+            # Final verification
+            echo "=== Deployment Complete ==="
+            curl -s -o /dev/null -w "HTTP Status: %{http_code}\n" http://localhost:3004 || echo "App might still be starting..."
