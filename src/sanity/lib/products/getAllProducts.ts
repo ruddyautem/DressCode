@@ -10,9 +10,9 @@ export const getAllProducts = async () => {
     const products = await sanityFetch({
       query: ALL_PRODUCTS_QUERY,
     });
-    // Return the list of products, or an empty array if none are found
-
-    return products.data || [];
+    
+    // Return the products directly (not products.data)
+    return products || [];
   } catch (error) {
     console.log("Error fetching all products:", error);
     return [];

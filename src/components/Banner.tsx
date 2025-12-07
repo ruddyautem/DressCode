@@ -1,10 +1,10 @@
-import { getActiveSaleByCouponCode } from "@/sanity/lib/sales/getActiveSaleByCouponCode";
-import { COUPON_CODES } from "@/sanity/lib/sales/couponCodes";
+import { getActiveSale } from "@/sanity/lib/sales/getActiveSaleByCouponCode";
 
 const Banner = async () => {
-  const sale = await getActiveSaleByCouponCode(COUPON_CODES.ETE);
+  const sale = await getActiveSale();
 
-  if (!sale?.isActive) {
+  // Explicitly check if sale exists and is active
+  if (!sale || sale.isActive !== true) {
     return null;
   }
 

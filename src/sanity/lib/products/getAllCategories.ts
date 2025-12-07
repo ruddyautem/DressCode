@@ -10,9 +10,9 @@ export const getAllCategories = async () => {
     const categories = await sanityFetch({
       query: ALL_CATEGORIES_QUERY,
     });
-    // Return the list of products, or an empty array if none are found
-
-    return categories.data || [];
+    
+    // Return the categories directly (not categories.data)
+    return categories || [];
   } catch (error) {
     console.log("Error fetching all categories:", error);
     return [];

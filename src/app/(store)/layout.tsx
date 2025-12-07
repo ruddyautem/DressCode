@@ -2,11 +2,10 @@ import Header from "@/components/Header";
 import "../globals.css";
 import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
-import { SanityLive } from "@/sanity/lib/live";
-import { VisualEditing } from "next-sanity";
 import { draftMode } from "next/headers";
 import { DisableDraftMode } from "@/components/DisableDraftMode";
 import { frFR } from "@clerk/localizations";
+import { VisualEditingWrapper } from "@/components/VisualEditingWrapper";
 
 export const metadata: Metadata = {
   title: "DressCode - Ruddy Autem",
@@ -25,14 +24,13 @@ export default async function RootLayout({
           {(await draftMode()).isEnabled && (
             <>
               <DisableDraftMode />
-              <VisualEditing />
+              <VisualEditingWrapper />
             </>
           )}
           <main>
             <Header />
             {children}
           </main>
-          <SanityLive />
         </body>
       </html>
     </ClerkProvider>

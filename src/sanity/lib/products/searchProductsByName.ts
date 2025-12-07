@@ -11,7 +11,7 @@ export const searchProductsByName = async (searchParam: string) => {
       query: PRODUCT_SEARCH_QUERY,
       params: { searchParam: `${searchParam}` },
     });
-    return products.data || [null];
+    return products || [null];
   } catch (error) {
     console.log("Error fetching products by name:", error);
     return [];

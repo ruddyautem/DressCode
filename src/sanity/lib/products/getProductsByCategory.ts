@@ -11,7 +11,7 @@ export const getProductsByCategory = async (categorySlug: string) => {
       query: PRODUCTS_BY_CATEGORY_QUERY,
       params: { categorySlug },
     });
-    return products.data || [];
+    return products || [];
   } catch (error) {
     console.log("Error fetching products by category", error);
     return [];

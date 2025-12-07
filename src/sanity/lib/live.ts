@@ -1,22 +1,51 @@
 import "server-only";
-// Querying with "sanityFetch" will keep content automatically updated
-// Before using it, import and render "<SanityLive />" in your layout, see
-// https://github.com/sanity-io/next-sanity#live-content-api for more information.
-import { defineLive } from "next-sanity";
 import { client } from "./client";
 
-//set viewer Token
-
+// Server-side token for live/preview content
 const token = process.env.SANITY_API_READ_TOKEN;
-if (!token) {
-  throw new Error("Missing SANITY_API_READ_TOKEN");
+if (!token && process.env.NODE_ENV !== "production") {
+  console.warn("SANITY_API_READ_TOKEN is missing. Live/preview features may not work.");
 }
 
-export const { sanityFetch, SanityLive } = defineLive({
-  client,
-  serverToken: token,
-  browserToken: token,
-  fetchOptions: {
-    revalidate: 0,
+const previewClient = client.withConfig({
+  token,
+  useCdn: false, // Disable CDN for real-time updates
+  stega: {
+    enabled: process.env.NEXT_PUBLIC_VERCEL_ENV === "preview" || process.env.NODE_ENV === "development",
+    studioUrl: "/studio",
   },
 });
+
+// Main sanityFetch function - replaces defineLive behavior
+export async function sanityFetch<T = any>({
+  query,
+  params = {},
+  tags = [],
+  preview = false, // Optional: true for draft/preview mode
+}: {
+  query: string;
+  params?: Record<string, any>;
+  tags?: string[];
+  preview?: boolean;
+}): Promise<T> {
+  const perspective = preview ? "preview" : "published";
+  const actualClient = previewClient.withConfig({ perspective });
+  
+  console.log("sanityFetch called:", { query, preview, perspective });
+  
+  const result = await actualClient.fetch<T>(query, params, {
+    next: {
+      revalidate: preview ? 1 : (process.env.NODE_ENV === "development" ? 30 : 3600),
+      tags,
+    },
+  });
+  
+  console.log("sanityFetch result:", { query, result: result?.length || result });
+  
+  return result;
+}
+
+// Dummy SanityLive component (required for backward compatibility)
+export function SanityLive() {
+  return null;
+}

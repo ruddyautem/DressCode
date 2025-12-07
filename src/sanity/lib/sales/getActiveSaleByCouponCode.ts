@@ -4,7 +4,7 @@ import { sanityFetch } from "../live";
 
 export const getActiveSaleByCouponCode = async (couponCode: CouponCode) => {
   const ACTIVE_SALE_BY_COUPON_QUERY = defineQuery(`
-    *[_type == 'sale' && isActive == true && couponCode == $couponCode] | order(validFrom desc)[0]`);
+    *[_type == 'sale' && isActive == true && couponCode == \$couponCode] | order(validFrom desc)[0]`);
 
   try {
     const activeSale = await sanityFetch({
@@ -12,9 +12,26 @@ export const getActiveSaleByCouponCode = async (couponCode: CouponCode) => {
       params: { couponCode },
     });
 
-    return activeSale ? activeSale.data : null;
+    return activeSale ? activeSale : null;
   } catch (error) {
     console.log("Error fetching active sale by coupon code:", error);
+    return null;
+  }
+};
+
+// Add this new function to the same file
+export const getActiveSale = async () => {
+  const ACTIVE_SALE_QUERY = defineQuery(`
+    *[_type == 'sale' && isActive == true] | order(validFrom desc)[0]`);
+
+  try {
+    const activeSale = await sanityFetch({
+      query: ACTIVE_SALE_QUERY,
+    });
+
+    return activeSale ? activeSale : null;
+  } catch (error) {
+    console.log("Error fetching active sale:", error);
     return null;
   }
 };

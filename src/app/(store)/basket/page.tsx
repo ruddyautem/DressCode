@@ -126,13 +126,13 @@ const BasketPage = () => {
             <button
               onClick={handleCheckout}
               disabled={isLoading}
-              className='mt-4 w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-gray-400'
+              className='mt-4 w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-gray-400 cursor-pointer'
             >
               {isLoading ? "En cours..." : "Finaliser la commande"}
             </button>
           ) : (
             <SignInButton mode='modal'>
-              <button className='mt-4 w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600'>
+              <button className='mt-4 w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 cursor-pointer'>
                 Se connecter pour finaliser la commande
               </button>
             </SignInButton>
