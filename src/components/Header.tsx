@@ -84,7 +84,11 @@ const Header = () => {
                 </div>
               </div>
             ) : (
-              <SignInButton mode='modal' className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded cursor-pointer'>Se Connecter</SignInButton>
+              <SignInButton mode='modal'>
+                <button className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded cursor-pointer'>
+                  Se Connecter
+                </button>
+              </SignInButton>
             )}
 
             {user?.passkeys.length === 0 && (
