@@ -66,7 +66,7 @@ const BasketPage = () => {
     <div className='container mx-auto max-w-6xl p-4'>
       <h1 className='mb-4 text-2xl font-bold'>Votre Panier</h1>
       <div className='flex-cold flex gap-8 lg:flex-row'>
-        <div className='flex-grow'>
+        <div className='grow'>
           {groupedItems?.map((item) => (
             <div
               key={item.product._id}
@@ -78,7 +78,7 @@ const BasketPage = () => {
                 }
                 className='min-w-0 flex flex-1 items-center cursor-pointer'
               >
-                <div className='flex-shrink-0 w-20 h-20 mr-4 sm:w-24 sm:h-24'>
+                <div className='shrink-0 w-20 h-20 mr-4 sm:w-24 sm:h-24'>
                   {item.product.image && (
                     <Image
                       src={imageUrl(item.product.image).url()}
@@ -100,7 +100,7 @@ const BasketPage = () => {
                 </div>
               </div>
 
-              <div className='flex-shrink-0 flex items-center ml-4'>
+              <div className='shrink-0 flex items-center ml-4'>
                 <AddToBasketButton product={item.product} />
               </div>
             </div>
