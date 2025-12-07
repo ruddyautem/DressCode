@@ -1,5 +1,6 @@
 import "server-only";
 import { client } from "./client";
+import type { ClientPerspective } from "@sanity/client";
 
 // Server-side token for live/preview content
 const token = process.env.SANITY_API_READ_TOKEN;
@@ -28,7 +29,7 @@ export async function sanityFetch<T = any>({
   tags?: string[];
   preview?: boolean;
 }): Promise<T> {
-  const perspective = preview ? "preview" : "published";
+  const perspective: ClientPerspective = preview ? "previewDrafts" : "published";
   const actualClient = previewClient.withConfig({ perspective });
   
   console.log("sanityFetch called:", { query, preview, perspective });
@@ -40,7 +41,7 @@ export async function sanityFetch<T = any>({
     },
   });
   
-  console.log("sanityFetch result:", { query, result: result?.length || result });
+  console.log("sanityFetch result:", { query, result: Array.isArray(result) ? result.length : result });
   
   return result;
 }
