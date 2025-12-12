@@ -132,7 +132,7 @@ const Orders = async () => {
                       >
                         <div className='flex items-center gap-3 sm:gap-4'>
                           {product.product?.image && (
-                            <div className='relative h-16 w-16 flex-shrink-0 rounded-md overflow-hidden'>
+                            <div className='relative h-16 w-16 shrink-0 rounded-md overflow-hidden'>
                               <Image
                                 src={imageUrl(product.product.image).url()}
                                 alt={product.product?.name ?? ""}

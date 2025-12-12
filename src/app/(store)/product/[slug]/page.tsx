@@ -1,6 +1,5 @@
 import AddToBasketButton from "@/components/AddToBasketButton";
-// import { Button } from "@/components/ui/button";
-import { imageUrl } from "@/lib/imageUrl";
+import { urlForProduct } from "@/lib/imageUrl"; // 👈 Use optimized version
 import { getProductBySlug } from "@/sanity/lib/products/getProductBySlug";
 import { PortableText } from "next-sanity";
 import Image from "next/image";
@@ -32,18 +31,20 @@ const ProductPage = async ({
     <div className='container mx-auto px-4 py-8'>
       <div className='grid grid-cols-1 md:grid-cols-2 gap-8'>
         <div
-          className={`relative aspect-square overflow-hidden rounded-lg shadow-lg ${isOutOfStock ? "opacity:50" : ""}`}
+          className={`relative aspect-square overflow-hidden rounded-lg shadow-lg bg-gray-100 ${isOutOfStock ? "opacity-50" : ""}`}
         >
           {product.image && (
             <Image
-              src={imageUrl(product.image).url()}
+              src={urlForProduct(product.image, 1200).url()} // 👈 Optimized 1200px
               alt={product.name ?? "Product Image"}
               fill
               className='object-cover transition-transform duration-300 hover:scale-105'
+              sizes='(max-width: 768px) 100vw, 50vw' // 👈 Proper sizes
+              priority // 👈 Load immediately (above fold)
             />
           )}
           {isOutOfStock && (
-            <div className=''>
+            <div className='absolute inset-0 flex items-center justify-center bg-black bg-opacity-50'>
               <span className='text-white font-bold text-lg'>Out Of Stock</span>
             </div>
           )}
