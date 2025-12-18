@@ -38,7 +38,7 @@ const ProductPage = async ({
               src={urlForProduct(product.image, 1200) || ""}
               alt={product.name ?? "Product Image"}
               fill
-              className='object-cover transition-transform duration-300 hover:scale-105'
+              className='object-cover transition-transform duration-300 hover:scale-105 cursor-pointer'
             />
           )}
           {isOutOfStock && (

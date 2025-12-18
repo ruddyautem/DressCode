@@ -3,7 +3,12 @@ import { Product } from "../../sanity.types";
 import Image from "next/image";
 import { urlForThumb } from "@/lib/imageUrl";
 
-const ProductThumb = ({ product }: { product: Product }) => {
+interface ProductThumbProps {
+  product: Product;
+  priority?: boolean; // ✅ NEW: Allow priority flag
+}
+
+const ProductThumb = ({ product, priority = false }: ProductThumbProps) => {
   const isOutOfStock = product.stock != null && product.stock <= 0;
 
   return (
@@ -19,8 +24,10 @@ const ProductThumb = ({ product }: { product: Product }) => {
             alt={product.name || "Product Image"}
             fill
             sizes='(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw'
-            loading='lazy'
-            // Remove placeholder and blurDataURL to fix hydration
+            loading={priority ? 'eager' : 'lazy'} // ✅ CHANGED: Conditional loading
+            priority={priority} // ✅ NEW: Add priority for LCP images
+            quality={80}
+            suppressHydrationWarning
           />
         )}
         {isOutOfStock && (

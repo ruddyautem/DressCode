@@ -6,7 +6,8 @@ import ProductThumb from "./ProductThumb";
 const ProductGrid = ({ products }: { products: Product[] }) => {
   return (
     <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4'>
-      {products?.filter(Boolean).map((product) => {
+      {products?.filter(Boolean).map((product, index) => {
+        // ✅ Added index
         return (
           <AnimatePresence key={product._id}>
             <motion.div
@@ -16,7 +17,11 @@ const ProductGrid = ({ products }: { products: Product[] }) => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
             >
-              <ProductThumb key={product._id} product={product} />
+              <ProductThumb
+                key={product._id}
+                product={product}
+                priority={index < 4} // ✅ First 4 products load eagerly
+              />
             </motion.div>
           </AnimatePresence>
         );
