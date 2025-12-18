@@ -1,50 +1,55 @@
 import { createClient } from "next-sanity";
-import { createImageUrlBuilder } from "@sanity/image-url";
+import { createImageUrlBuilder, SanityImageSource } from "@sanity/image-url";
 
-// Use the same client config as your sanity client
 export const imageClient = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
   dataset: process.env.NEXT_PUBLIC_SANITY_DATASET!,
   apiVersion: "2024-01-01",
-  useCdn: true, // ✅ Good - uses Sanity's CDN
+  useCdn: true,
 });
 
 const builder = createImageUrlBuilder(imageClient);
 
-// 🎯 OPTIMIZED: Default with auto-format & reasonable sizing
-export function urlFor(source: any) {
-  return builder
-    .image(source)
-    .auto("format") // Auto WebP/AVIF for modern browsers
-    .fit("max") // Don't crop, just fit
-    .quality(85); // Good quality, smaller size
+// 🎯 Default with optimization - Returns URL string
+export function urlFor(source: SanityImageSource): string | null {
+  if (!source) return null;
+
+  return builder.image(source).auto("format").fit("max").quality(80).url();
 }
 
-// 🎯 OPTIMIZED: For product thumbnails (grid view)
-export function urlForThumb(source: any, width = 600) {
+// 🎯 For product thumbnails (grid view) - Returns URL string
+export function urlForThumb(
+  source: SanityImageSource,
+  width = 400
+): string | null {
+  if (!source) return null;
+
   return builder
     .image(source)
     .width(width)
-    .height(width) // Square aspect
+    .height(width)
     .auto("format")
     .fit("crop")
-    .quality(80); // Slightly lower for thumbs
+    .quality(75)
+    .url();
 }
 
-// 🎯 OPTIMIZED: For product detail pages
-export function urlForProduct(source: any, width = 1200) {
+// 🎯 For product detail pages - Returns URL string
+export function urlForProduct(
+  source: SanityImageSource,
+  width = 800
+): string | null {
+  if (!source) return null;
+
   return builder
     .image(source)
     .width(width)
     .auto("format")
     .fit("max")
-    .quality(85);
+    .quality(80)
+    .url();
 }
 
-// Generic image URL (backward compatibility)
-export function urlForImage(source: any) {
-  return urlFor(source);
-}
-
-// Backward compatibility export
+// Backward compatibility
+export const urlForImage = urlFor;
 export const imageUrl = urlFor;

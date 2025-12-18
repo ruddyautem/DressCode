@@ -61,7 +61,7 @@ function createLineItems(items: GroupedBasketItem[]) {
           sanityProductId: item.product._id, // Use the Sanity product ID
         },
         images: item.product.image
-          ? [imageUrl(item.product.image).url()]
+          ? [imageUrl(item.product.image) || ""]
           : undefined,
       },
     },

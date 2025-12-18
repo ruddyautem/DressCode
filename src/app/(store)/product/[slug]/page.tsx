@@ -35,12 +35,10 @@ const ProductPage = async ({
         >
           {product.image && (
             <Image
-              src={urlForProduct(product.image, 1200).url()} // 👈 Optimized 1200px
+              src={urlForProduct(product.image, 1200) || ""}
               alt={product.name ?? "Product Image"}
               fill
               className='object-cover transition-transform duration-300 hover:scale-105'
-              sizes='(max-width: 768px) 100vw, 50vw' // 👈 Proper sizes
-              priority // 👈 Load immediately (above fold)
             />
           )}
           {isOutOfStock && (

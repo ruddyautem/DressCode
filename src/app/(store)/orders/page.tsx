@@ -134,7 +134,7 @@ const Orders = async () => {
                           {product.product?.image && (
                             <div className='relative h-16 w-16 shrink-0 rounded-md overflow-hidden'>
                               <Image
-                                src={imageUrl(product.product.image).url()}
+                                src={imageUrl(product.product.image) || ""}
                                 alt={product.product?.name ?? ""}
                                 className='object-contain'
                                 fill

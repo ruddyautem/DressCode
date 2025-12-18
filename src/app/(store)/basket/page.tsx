@@ -81,7 +81,7 @@ const BasketPage = () => {
                 <div className='shrink-0 w-20 h-20 mr-4 sm:w-24 sm:h-24'>
                   {item.product.image && (
                     <Image
-                      src={imageUrl(item.product.image).url()}
+                      src={imageUrl(item.product.image) || ""}
                       alt={item.product.name ?? "Product Image"}
                       className='w-full h-full object-contain rounded'
                       width={96}
