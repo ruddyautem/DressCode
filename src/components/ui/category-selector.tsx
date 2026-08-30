@@ -47,7 +47,7 @@ export const CategorySelectorComponent = ({
           <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0' />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className='w-full p-0'>
+      <PopoverContent className='w-full p-0 bg-white'>
         <Command>
           <CommandInput
             placeholder='Catégories...'
@@ -74,6 +74,7 @@ export const CategorySelectorComponent = ({
                 <CommandItem
                   key={category._id}
                   value={category.title}
+                  className='cursor-pointer hover:bg-gray-100'
                   onSelect={() => {
                     setValue(value === category._id ? "" : category._id);
                     router.push(`/categories/${category.slug?.current}`);

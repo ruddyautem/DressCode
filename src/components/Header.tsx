@@ -28,7 +28,7 @@ const Header = () => {
   };
 
   return (
-    <header className='flex flex-wrap justify-between items-center px-4 py-4 lg:px-8 gap-4'>
+    <header className='flex flex-wrap justify-center sm:justify-between items-center px-4 py-4 lg:px-8 gap-4'>
       {/* Logo */}
       <Link
         href='/'
@@ -78,7 +78,16 @@ const Header = () => {
 
           {user ? (
             <div className='flex items-center space-x-2'>
-              <UserButton />
+              <UserButton 
+                appearance={{
+                  elements: {
+                    userButtonAvatarBox: "w-10 h-10 !rounded",
+                    avatarBox: "w-10 h-10 !rounded",
+                    avatarImage: "!rounded",
+                    userButtonTrigger: "!rounded"
+                  }
+                }}
+              />
               <div className='hidden sm:block text-xs'>
                 <p className='text-gray-400'>Bienvenue</p>
                 <p className='font-bold'>{user.fullName}</p>
