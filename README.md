@@ -1,36 +1,177 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# DressCode
 
-## Getting Started
+<div align="center">
 
-First, run the development server:
+**[Français](#français)** · **[English](#english)**
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+</div>
+
+---
+
+## Français
+
+### 📋 Présentation
+
+Bienvenue sur le code source de **DressCode**. Développeur Full Stack, j'avais envie d'explorer l'écosystème e-commerce moderne, alors j'ai construit cette boutique en ligne de A à Z. C'est une application Next.js 16 qui intègre des solutions robustes : **Clerk** pour une authentification sans friction, **Sanity** comme CMS headless pour gérer le catalogue de produits, et **Stripe** pour le traitement sécurisé des paiements.
+
+### 📑 Les pages
+
+| Route | Ce qu'on y trouve |
+| --- | --- |
+| `/` (Accueil) | Une vitrine avec les promotions en cours, les catégories, et une grille de produits |
+| `/product/[slug]` | La fiche détaillée d'un article, son prix, et l'ajout au panier |
+| `/categories/[slug]` | Un filtre dynamique pour naviguer facilement parmi les produits d'une catégorie |
+| `/search` | Un moteur de recherche pour trouver rapidement un article précis |
+| `/basket` | Le panier d'achat, géré localement avec Zustand pour plus de rapidité avant le paiement |
+| `/success` | La page de confirmation post-paiement, qui vide le panier au passage |
+| `/orders` | L'historique des commandes, accessible uniquement aux utilisateurs connectés |
+| `/studio` | Le back-office d'administration (Sanity Studio) embarqué directement dans l'application |
+
+### 💳 Paiements & Webhooks
+
+Afin de garantir une sécurité maximale, tout le processus de paiement est délégué à Stripe Checkout. Une fois le paiement validé, un webhook sécurisé écoute les événements de Stripe et se charge de créer la commande correspondante directement dans le CMS Sanity.
+
+### 📦 Gestion du contenu
+
+Le catalogue entier vit sur Sanity (v6), ce qui permet d'ajouter des produits ou lancer des soldes sans toucher au code. Les requêtes sont optimisées via les API de cache de Next.js pour que les pages se chargent instantanément tout en conservant des données à jour.
+
+### 🛠 Stack technique
+
+| Catégorie | Technologies |
+| --- | --- |
+| Framework | Next.js 16 (App Router) + React 19 |
+| Langage | TypeScript |
+| Package manager | Bun |
+| Styling | Tailwind CSS v4 |
+| CMS & Back-office | Sanity v6 |
+| Authentification | Clerk (Core 3) |
+| Paiement & Webhooks | Stripe |
+| State Management | Zustand |
+| UI & Icônes | shadcn/ui, Lucide React |
+| Tests | Vitest + React Testing Library |
+
+### 📁 Structure du projet
+
+```
+dresscode-ecommerce/
+├── actions/                     # Actions côté serveur (ex: créer la session Stripe)
+├── src/
+│   ├── app/
+│   │   ├── (store)/             # Ce que le client voit (Accueil, Panier, Commandes...)
+│   │   ├── api/
+│   │   │   └── webhook/         # Point d'entrée pour les événements Stripe
+│   │   ├── studio/              # Le panneau d'administration Sanity
+│   │   └── globals.css          # Styles globaux et variables Tailwind v4
+│   ├── components/              # Composants UI réutilisables (Header, ProductGrid...)
+│   ├── lib/                     # Utilitaires (formatage prix, configuration Stripe)
+│   ├── sanity/                  # Configuration du CMS
+│   │   ├── schemaTypes/         # Structure des Produits, Commandes, etc.
+│   │   └── lib/                 # Logique de récupération des données
+│   └── proxy.ts                 # Middleware pour la protection des routes (Clerk)
+├── .env.local                   # Variables d'environnement (Stripe, Sanity, Clerk)
+├── package.json
+└── README.md
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 🚀 Pour lancer le projet
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+git clone <url-du-repo>
+cd dresscode-ecommerce
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+bun install
+bun run dev
+```
 
-## Learn More
+Direction [http://localhost:3000](http://localhost:3000).
 
-To learn more about Next.js, take a look at the following resources:
+> 💡 Le projet nécessite un fichier `.env.local` configuré avec vos propres clés API pour **Clerk**, **Sanity** et **Stripe** afin de fonctionner.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### À propos de moi
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Je suis Ruddy Autem, développeur Full Stack. Si le code vous inspire ou que vous voulez discuter, n'hésitez pas — vous me trouverez sur [autem.dev](https://autem.dev) ou [GitHub](https://github.com/ruddyautem).
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## English
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### 📋 Overview
+
+Welcome to the source code of **DressCode**. As a Full Stack developer, I wanted to explore the modern e-commerce ecosystem, so I built this online store from scratch. It's a Next.js 16 app integrating robust solutions: **Clerk** for frictionless authentication, **Sanity** as a headless CMS to manage the product catalog, and **Stripe** for secure payment processing.
+
+### 📑 Pages
+
+| Route | What's there |
+| --- | --- |
+| `/` (Home) | A storefront featuring active promotions, categories, and a product grid |
+| `/product/[slug]` | A detailed product page with pricing and the add-to-cart action |
+| `/categories/[slug]` | A dynamic filter to easily browse items within a specific category |
+| `/search` | A search engine to quickly find a specific item |
+| `/basket` | The shopping cart, managed locally with Zustand for speed before checkout |
+| `/success` | The post-payment confirmation page, which clears the cart |
+| `/orders` | Order history, accessible only to logged-in users |
+| `/studio` | The administration back-office (Sanity Studio) embedded directly into the app |
+
+### 💳 Payments & Webhooks
+
+To ensure maximum security, the entire payment process is delegated to Stripe Checkout. Once a payment is successful, a secure webhook listens to Stripe events and handles creating the corresponding order directly inside the Sanity CMS.
+
+### 📦 Content Management
+
+The entire catalog lives on Sanity (v6), allowing me to add products or run sales without touching the code. Data fetching is optimized using Next.js caching APIs so pages load instantly while keeping the data fresh.
+
+### 🛠 Tech stack
+
+| Category | Technologies |
+| --- | --- |
+| Framework | Next.js 16 (App Router) + React 19 |
+| Language | TypeScript |
+| Package manager | Bun |
+| Styling | Tailwind CSS v4 |
+| CMS & Back-office | Sanity v6 |
+| Authentication | Clerk (Core 3) |
+| Payments & Webhooks | Stripe |
+| State Management | Zustand |
+| UI & Icons | shadcn/ui, Lucide React |
+| Testing | Vitest + React Testing Library |
+
+### 📁 Project structure
+
+```
+dresscode-ecommerce/
+├── actions/                     # Server actions (e.g., creating a Stripe session)
+├── src/
+│   ├── app/
+│   │   ├── (store)/             # What the end user sees (Home, Cart, Orders...)
+│   │   ├── api/
+│   │   │   └── webhook/         # Endpoint for Stripe events
+│   │   ├── studio/              # The Sanity admin panel
+│   │   └── globals.css          # Global styles and Tailwind v4 variables
+│   ├── components/              # Reusable UI components (Header, ProductGrid...)
+│   ├── lib/                     # Utilities (price formatting, Stripe config)
+│   ├── sanity/                  # CMS configuration
+│   │   ├── schemaTypes/         # Structure of Products, Orders, etc.
+│   │   └── lib/                 # Data fetching logic
+│   └── proxy.ts                 # Route protection middleware (Clerk)
+├── .env.local                   # Environment variables (Stripe, Sanity, Clerk)
+├── package.json
+└── README.md
+```
+
+### 🚀 Running it locally
+
+```bash
+git clone <repo-url>
+cd dresscode-ecommerce
+
+bun install
+bun run dev
+```
+
+Then head to [http://localhost:3000](http://localhost:3000).
+
+> 💡 The project requires a `.env.local` file configured with your own API keys for **Clerk**, **Sanity**, and **Stripe** to function properly.
+
+### About me
+
+I'm Ruddy Autem, a Full Stack developer. If the code speaks to you or you just want to say hi, feel free — you'll find me at [autem.dev](https://autem.dev) or on [GitHub](https://github.com/ruddyautem).
