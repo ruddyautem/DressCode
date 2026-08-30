@@ -1,11 +1,11 @@
-import { TrolleyIcon } from "@sanity/icons";
+import { ShoppingCart } from "lucide-react";
 import { defineField, defineType } from "sanity";
 
 export const productType = defineType({
   name: "product",
   title: "Products",
   type: "document",
-  icon: TrolleyIcon,
+  icon: ShoppingCart,
   fields: [
     defineField({
       name: "name",

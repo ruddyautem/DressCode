@@ -18,7 +18,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider dynamic localization={frFR}>
+    <ClerkProvider localization={frFR}>
       <html lang='en'>
         <body>
           {(await draftMode()).isEnabled && (

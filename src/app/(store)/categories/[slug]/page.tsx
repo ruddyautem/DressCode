@@ -1,6 +1,25 @@
 import ProductsViews from "@/components/ProductsView";
 import { getAllCategories } from "@/sanity/lib/products/getAllCategories";
 import { getProductsByCategory } from "@/sanity/lib/products/getProductsByCategory";
+import { Metadata } from "next";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  
+  const title = slug
+    .split("-")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+
+  return {
+    title: `${title} | DressCode`,
+    description: `Découvrez notre collection de ${title} sur DressCode.`,
+  };
+}
 
 const CategoryPage = async ({
   params,

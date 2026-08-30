@@ -1,12 +1,12 @@
 // src/sanity/schemaTypes/orderType.ts
-import { BasketIcon } from "@sanity/icons";
+import { ShoppingBasket } from "lucide-react";
 import { defineArrayMember, defineField, defineType } from "sanity";
 
 export const orderType = defineType({
   name: "order",
   title: "Order",
   type: "document",
-  icon: BasketIcon,
+  icon: ShoppingBasket,
   fields: [
     defineField({
       name: "orderNumber",
@@ -138,7 +138,7 @@ export const orderType = defineType({
       return {
         title: `${select.name} (${orderIdSnippet})`,
         subtitle: `${select.amount} ${select.currency} - ${select.email}`,
-        media: BasketIcon,
+        media: ShoppingBasket,
       };
     },
   },

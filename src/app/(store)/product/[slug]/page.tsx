@@ -4,6 +4,28 @@ import { getProductBySlug } from "@/sanity/lib/products/getProductBySlug";
 import { PortableText } from "next-sanity";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import { Metadata } from "next";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const product = await getProductBySlug(slug);
+
+  if (!product) {
+    return { title: "Product Not Found" };
+  }
+
+  return {
+    title: `${product.name} | DressCode`,
+    description: `Achetez ${product.name} sur DressCode.`,
+    openGraph: {
+      images: product.image ? [urlForProduct(product.image, 1200) || ""] : [],
+    },
+  };
+}
 
 export const dynamic = "force-static";
 export const revalidate = 60;

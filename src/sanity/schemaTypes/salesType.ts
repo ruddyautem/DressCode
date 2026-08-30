@@ -1,4 +1,4 @@
-import { TagIcon } from "@sanity/icons";
+import { TagIcon } from "lucide-react";
 import { defineType, defineField } from "sanity";
 
 export const salesType = defineType({

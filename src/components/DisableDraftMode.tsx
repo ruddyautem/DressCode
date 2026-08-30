@@ -1,14 +1,15 @@
 "use client";
 
-import { useDraftModeEnvironment } from "next-sanity/hooks";
+import { useVisualEditingEnvironment } from "next-sanity/hooks";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export function DisableDraftMode() {
-  const environment = useDraftModeEnvironment();
+  const environment = useVisualEditingEnvironment();
   const router = useRouter();
   const [isDisabling, setIsDisabling] = useState(false);
 
+  // @ts-expect-error - we check string values
   if (environment !== "live" && environment !== "unknown") {
     return null;
   }

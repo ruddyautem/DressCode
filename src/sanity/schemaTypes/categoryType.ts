@@ -1,4 +1,4 @@
-import { TagIcon } from "@sanity/icons";
+import { TagIcon } from "lucide-react";
 import { defineField, defineType } from "sanity";
 
 export const categoryType = defineType({

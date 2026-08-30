@@ -2,14 +2,14 @@
 
 import {
   ClerkLoaded,
-  SignedIn,
+  Show,
   SignInButton,
   UserButton,
   useUser,
 } from "@clerk/nextjs";
 import Link from "next/link";
 import Form from "next/form";
-import { PackageIcon, TrolleyIcon } from "@sanity/icons";
+import { PackageIcon, ShoppingCartIcon } from "lucide-react";
 import useBasketStore from "@/app/(store)/store";
 
 const Header = () => {
@@ -28,79 +28,79 @@ const Header = () => {
   };
 
   return (
-    <header className='flex flex-wrap justify-center sm:justify-between px-4 py-2 '>
-      {/* Container centré */}
-      <div className='flex flex-wrap w-full items-center justify-center sm:justify-between gap-4'>
-        {/* Logo */}
+    <header className='flex flex-wrap justify-between items-center px-4 py-4 lg:px-8 gap-4'>
+      {/* Logo */}
+      <Link
+        href='/'
+        className='text-2xl font-bold text-blue-500 hover:opacity-50 cursor-pointer shrink-0'
+      >
+        DressCode
+      </Link>
+
+      {/* Barre de recherche - Drops to new line on mobile/tablet for space */}
+      <Form
+        action='/search'
+        className='w-full order-last lg:flex-1 lg:mx-8 lg:order-none'
+      >
+        <input
+          type='text'
+          name='query'
+          placeholder='Rechercher des articles'
+          className='bg-gray-100 text-gray-800 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 border w-full'
+        />
+      </Form>
+
+      {/* Section utilisateur & panier */}
+      <div className='flex items-center gap-4 shrink-0'>
+        {/* Panier */}
         <Link
-          href='/'
-          className='text-2xl font-bold text-blue-500 hover:opacity-50 cursor-pointer'
+          href='/basket'
+          className='relative flex items-center space-x-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
         >
-          DressCode
+          <ShoppingCartIcon width={24} height={24} />
+          <span className='absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs'>
+            {itemCount}
+          </span>
+          <span className='hidden sm:inline'>Panier</span>
         </Link>
 
-        {/* Barre de recherche */}
-        <Form action='/search' className='w-full sm:w-auto sm:flex-1 min-w-64'>
-          <input
-            type='text'
-            name='query'
-            placeholder='Rechercher des articles'
-            className='bg-gray-100 text-gray-800 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 border w-full max-w-4xl'
-          />
-        </Form>
+        {/* User Area */}
+        <ClerkLoaded>
+          <Show when="signed-in">
+            <Link
+              href='/orders'
+              className='relative flex items-center space-x-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
+            >
+              <PackageIcon width={24} height={24} />
+              <span>Commandes</span>
+            </Link>
+          </Show>
 
-        {/* Section utilisateur & panier */}
-        <div className='flex flex-wrap justify-center items-center gap-4 mx-auto'>
-          {/* Panier */}
-          <Link
-            href='/basket'
-            className='relative flex items-center space-x-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
-          >
-            <TrolleyIcon width={24} height={24} />
-            <span className='absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs'>
-              {itemCount}
-            </span>
-            <span>Panier</span>
-          </Link>
-
-          {/* User Area */}
-          <ClerkLoaded>
-            <SignedIn>
-              <Link
-                href='/orders'
-                className='relative flex items-center space-x-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
-              >
-                <PackageIcon width={24} height={24} />
-                <span>Commandes</span>
-              </Link>
-            </SignedIn>
-
-            {user ? (
-              <div className='flex items-center space-x-2'>
-                <UserButton />
-                <div className='hidden sm:block text-xs'>
-                  <p className='text-gray-400'>Bienvenue</p>
-                  <p className='font-bold'>{user.fullName}</p>
-                </div>
+          {user ? (
+            <div className='flex items-center space-x-2'>
+              <UserButton />
+              <div className='hidden sm:block text-xs'>
+                <p className='text-gray-400'>Bienvenue</p>
+                <p className='font-bold'>{user.fullName}</p>
               </div>
-            ) : (
-              <SignInButton mode='modal'>
-                <button className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded cursor-pointer'>
-                  Se Connecter
-                </button>
-              </SignInButton>
-            )}
-
-            {user?.passkeys.length === 0 && (
-              <button
-                onClick={createClerkPasskey}
-                className='bg-white hover:bg-blue-700 hover:text-white animate-pulse text-blue-500 font-bold py-2 px-4 rounded border-blue-300 border'
-              >
-                Créer un Passkey
+            </div>
+          ) : (
+            <SignInButton mode='modal'>
+              <button className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded cursor-pointer'>
+                Se Connecter
               </button>
-            )}
-          </ClerkLoaded>
-        </div>
+            </SignInButton>
+          )}
+
+          {user?.passkeys.length === 0 && (
+            <button
+              onClick={createClerkPasskey}
+              className='hidden lg:block bg-white hover:bg-blue-700 hover:text-white animate-pulse text-blue-500 font-bold py-2 px-4 rounded border-blue-300 border'
+            >
+              Créer un Passkey
+            </button>
+          )}
+        </ClerkLoaded>
       </div>
     </header>
   );

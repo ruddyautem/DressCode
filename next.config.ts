@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
         hostname: "cdn.sanity.io",
       },
     ],
-    minimumCacheTTL: 30,
+    minimumCacheTTL: 31536000, // 1 year, as Sanity image URLs are immutable
     deviceSizes: [640, 750, 1080],
     imageSizes: [32, 64, 96],
     formats: ["image/webp"],

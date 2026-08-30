@@ -1,6 +1,12 @@
 import { clerkMiddleware } from "@clerk/nextjs/server";
 
-export default clerkMiddleware();
+import { NextRequest } from "next/server";
+
+const middleware = clerkMiddleware({ clockSkewInMs: 5 * 60 * 1000 } as any);
+
+export function proxy(request: NextRequest, event: any) {
+  return middleware(request, event);
+}
 
 export const config = {
   matcher: [
