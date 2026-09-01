@@ -38,7 +38,7 @@ const ProductThumb = ({ product, priority = false }: ProductThumbProps) => {
           </div>
         )}
       </div>
-      <div className='p-4'>
+      <div className='p-4 min-h-40'>
         <h2 className='text-lg font-semibold text-gray-800 truncate'>
           {product.name}
         </h2>
@@ -51,7 +51,7 @@ const ProductThumb = ({ product, priority = false }: ProductThumbProps) => {
             )
             .join("") || "no description available"}
         </p>
-        <p className='mt-2 text-lg font-bold text-gray-900'>
+        <p className='mt-2 text-lg font-bold text-gray-900 absolute bottom-2'>
           €{product.price?.toFixed(2)}
         </p>
       </div>
