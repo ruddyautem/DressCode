@@ -19,20 +19,16 @@ export default async function RootLayout({
 }>) {
   return (
     <ClerkProvider localization={frFR}>
-      <html lang='en'>
-        <body>
-          {(await draftMode()).isEnabled && (
-            <>
-              <DisableDraftMode />
-              <VisualEditingWrapper />
-            </>
-          )}
-          <main>
-            <Header />
-            {children}
-          </main>
-        </body>
-      </html>
+      {(await draftMode()).isEnabled && (
+        <>
+          <DisableDraftMode />
+          <VisualEditingWrapper />
+        </>
+      )}
+      <main>
+        <Header />
+        {children}
+      </main>
     </ClerkProvider>
   );
 }

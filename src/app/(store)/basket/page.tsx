@@ -10,7 +10,7 @@ import {
   Metadata,
 } from "../../../../actions/createCheckoutSession";
 import { imageUrl } from "@/lib/imageUrl";
-import AddToBasketButton from "@/components/AddToBasketButton";
+import AddToBasketButton from "@/components/BasketQuantityControl";
 
 const BasketPage = () => {
   const groupedItems = useBasketStore((state) => state.getGroupedItems());
@@ -65,18 +65,18 @@ const BasketPage = () => {
   return (
     <div className='container mx-auto max-w-6xl p-4'>
       <h1 className='mb-4 text-2xl font-bold'>Votre Panier</h1>
-      <div className='flex-cold flex gap-8 lg:flex-row'>
+      <div className='flex-col flex gap-8 sm:flex-row'>
         <div className='grow'>
           {groupedItems?.map((item) => (
             <div
               key={item.product._id}
-              className='flex justify-between items-center p-4 mb-4 rounded border'
+              className='flex justify-between items-center p-4 mb-4 rounded border flex-col sm:flex-row'
             >
               <div
                 onClick={() =>
                   router.push(`/product/${item.product.slug?.current}`)
                 }
-                className='min-w-0 flex flex-1 items-center cursor-pointer'
+                className='w-full flex flex-1 items-center cursor-pointer'
               >
                 <div className='shrink-0 w-20 h-20 mr-4 sm:w-24 sm:h-24'>
                   {item.product.image && (
@@ -86,6 +86,7 @@ const BasketPage = () => {
                       className='w-full h-full object-contain rounded'
                       width={96}
                       height={96}
+                      sizes="(max-width: 640px) 80px, 96px"
                     />
                   )}
                 </div>
@@ -95,7 +96,8 @@ const BasketPage = () => {
                   </h2>
                   <p className='text-sm sm:text-base'>
                     Prix :
-                    {((item.product.price ?? 0) * item.quantity).toFixed(2)} €{" "}
+                    {((item.product.price ?? 0) * item.quantity).toFixed(2)}{" "}
+                    €{" "}
                   </p>
                 </div>
               </div>

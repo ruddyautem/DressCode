@@ -1,4 +1,4 @@
-import AddToBasketButton from "@/components/AddToBasketButton";
+import AddToBasketButton from "@/components/BasketQuantityControl";
 import { urlForProduct } from "@/lib/imageUrl"; // 👈 Use optimized version
 import { getProductBySlug } from "@/sanity/lib/products/getProductBySlug";
 import { PortableText } from "next-sanity";
@@ -40,7 +40,7 @@ const ProductPage = async ({
 
   console.log(
     crypto.randomUUID().slice(0, 5) +
-      `>>> Rerendered the product page cache for ${slug}`
+      `>>> Rerendered the product page cache for ${slug}`,
   );
 
   if (!product) {

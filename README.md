@@ -35,6 +35,10 @@ Afin de garantir une sécurité maximale, tout le processus de paiement est dél
 
 Le catalogue entier vit sur Sanity (v6), ce qui permet d'ajouter des produits ou lancer des soldes sans toucher au code. Les requêtes sont optimisées via les API de cache de Next.js pour que les pages se chargent instantanément tout en conservant des données à jour.
 
+### 🛡️ Sécurité & Validation
+
+L'application utilise **Zod** comme rempart de sécurité au moment de l'exécution (Runtime). Les variables d'environnement sont strictement vérifiées au démarrage (évitant les crashs silencieux en production) et les actions sensibles, comme la création d'une session de paiement, sont validées pour s'assurer que les données reçues correspondent parfaitement aux attentes du serveur.
+
 ### 🛠 Stack technique
 
 | Catégorie | Technologies |
@@ -47,6 +51,7 @@ Le catalogue entier vit sur Sanity (v6), ce qui permet d'ajouter des produits ou
 | Authentification | Clerk (Core 3) |
 | Paiement & Webhooks | Stripe |
 | State Management | Zustand |
+| Validation de Données | Zod |
 | UI & Icônes | shadcn/ui, Lucide React |
 | Tests | Vitest + React Testing Library |
 
@@ -120,6 +125,10 @@ To ensure maximum security, the entire payment process is delegated to Stripe Ch
 
 The entire catalog lives on Sanity (v6), allowing me to add products or run sales without touching the code. Data fetching is optimized using Next.js caching APIs so pages load instantly while keeping the data fresh.
 
+### 🛡️ Security & Validation
+
+The application uses **Zod** as a security gatekeeper at runtime. Environment variables are strictly parsed upon startup (preventing silent crashes in production) and sensitive server actions, like generating a checkout session, are validated to ensure incoming data perfectly matches the server's expectations.
+
 ### 🛠 Tech stack
 
 | Category | Technologies |
@@ -132,6 +141,7 @@ The entire catalog lives on Sanity (v6), allowing me to add products or run sale
 | Authentication | Clerk (Core 3) |
 | Payments & Webhooks | Stripe |
 | State Management | Zustand |
+| Data Validation | Zod |
 | UI & Icons | shadcn/ui, Lucide React |
 | Testing | Vitest + React Testing Library |
 

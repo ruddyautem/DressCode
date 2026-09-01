@@ -11,7 +11,7 @@ const ProductsViews = ({ products, categories }: ProductsViewProps) => {
   return (
     <div className='flex flex-col'>
       {/* categories */}
-      <div className='w-full sm:w-[200px]'>
+      <div className='w-full sm:w-50'>
         <CategorySelectorComponent categories={categories} />
       </div>
 
@@ -19,7 +19,6 @@ const ProductsViews = ({ products, categories }: ProductsViewProps) => {
       <div className='flex-1'>
         <div>
           <ProductGrid products={products} />
-          {/* <hr className='w-1/2 sm:w-3/4' /> */}
         </div>
       </div>
     </div>

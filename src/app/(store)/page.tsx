@@ -6,6 +6,8 @@ import { getAllProducts } from "@/sanity/lib/products/getAllProducts";
 export const dynamic = "force-static";
 export const revalidate = 60;
 
+import { Suspense } from "react";
+
 export default async function Home() {
   const products = await getAllProducts();
   const categories = await getAllCategories();
@@ -14,7 +16,9 @@ export default async function Home() {
     <div className=''>
       <Banner />
       <div className='flex flex-col items-center justify-top min-h-screen bg-gray-100 p-4'>
-        <ProductsViews products={products} categories={categories} />
+        <Suspense fallback={<div>Loading products...</div>}>
+          <ProductsViews products={products} categories={categories} />
+        </Suspense>
       </div>
     </div>
   );

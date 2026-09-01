@@ -15,7 +15,7 @@ import useBasketStore from "@/app/(store)/store";
 const Header = () => {
   const { user } = useUser();
   const itemCount = useBasketStore((state) =>
-    state.items.reduce((total, item) => total + item.quantity, 0)
+    state.items.reduce((total, item) => total + item.quantity, 0),
   );
 
   const createClerkPasskey = async () => {
@@ -28,7 +28,7 @@ const Header = () => {
   };
 
   return (
-    <header className='flex flex-wrap justify-center sm:justify-between items-center px-4 py-4 lg:px-8 gap-4'>
+    <header className='flex flex-wrap sm:flex-nowrap sm:justify-between items-center px-4 py-4 lg:px-8 gap-4'>
       {/* Logo */}
       <Link
         href='/'
@@ -40,7 +40,7 @@ const Header = () => {
       {/* Barre de recherche - Drops to new line on mobile/tablet for space */}
       <Form
         action='/search'
-        className='w-full order-last lg:flex-1 lg:mx-8 lg:order-none'
+        className='w-full order-last sm:order-0 lg:flex-1 lg:mx-8 lg:order-0'
       >
         <input
           type='text'
@@ -51,41 +51,41 @@ const Header = () => {
       </Form>
 
       {/* Section utilisateur & panier */}
-      <div className='flex items-center gap-4 shrink-0'>
+      <div className='flex flex-wrap items-center justify-center gap-4 shrink-0 ml-auto'>
         {/* Panier */}
         <Link
           href='/basket'
-          className='relative flex items-center space-x-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
+          className='relative flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
         >
           <ShoppingCartIcon width={24} height={24} />
           <span className='absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs'>
             {itemCount}
           </span>
-          <span className='hidden sm:inline'>Panier</span>
+          <span className='hidden lg:inline'>Panier</span>
         </Link>
 
         {/* User Area */}
         <ClerkLoaded>
-          <Show when="signed-in">
+          <Show when='signed-in'>
             <Link
               href='/orders'
-              className='relative flex items-center space-x-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
+              className='relative flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
             >
               <PackageIcon width={24} height={24} />
-              <span>Commandes</span>
+              <span className='hidden lg:inline'>Commandes</span>
             </Link>
           </Show>
 
           {user ? (
             <div className='flex items-center space-x-2'>
-              <UserButton 
+              <UserButton
                 appearance={{
                   elements: {
                     userButtonAvatarBox: "w-10 h-10 !rounded",
                     avatarBox: "w-10 h-10 !rounded",
                     avatarImage: "!rounded",
-                    userButtonTrigger: "!rounded"
-                  }
+                    userButtonTrigger: "!rounded",
+                  },
                 }}
               />
               <div className='hidden sm:block text-xs'>
@@ -96,7 +96,8 @@ const Header = () => {
           ) : (
             <SignInButton mode='modal'>
               <button className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded cursor-pointer'>
-                Se Connecter
+                <span className='hidden sm:inline'>Se Connecter</span>
+                <span className='sm:hidden'>Login</span>
               </button>
             </SignInButton>
           )}

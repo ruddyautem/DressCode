@@ -2,6 +2,7 @@
 import { Product } from "../../sanity.types";
 import { AnimatePresence, motion } from "framer-motion";
 import ProductThumb from "./ProductThumb";
+import AddToBasketButton from "./BasketQuantityControl";
 
 const ProductGrid = ({ products }: { products: Product[] }) => {
   return (
@@ -11,12 +12,15 @@ const ProductGrid = ({ products }: { products: Product[] }) => {
         return (
           <AnimatePresence key={product._id}>
             <motion.div
-              className='flex justify-center'
+              className='flex justify-center relative'
               layout
               initial={{ opacity: 0.2 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
             >
+              <span className='absolute bottom-2 right-2 z-10'>
+                <AddToBasketButton product={product} />
+              </span>
               <ProductThumb
                 key={product._id}
                 product={product}
