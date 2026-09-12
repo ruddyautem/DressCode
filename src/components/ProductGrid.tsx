@@ -2,29 +2,25 @@
 import { Product } from "../../sanity.types";
 import { AnimatePresence, motion } from "framer-motion";
 import ProductThumb from "./ProductThumb";
-import AddToBasketButton from "./BasketQuantityControl";
 
 const ProductGrid = ({ products }: { products: Product[] }) => {
   return (
-    <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4'>
+    <div className='grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 lg:gap-8 items-stretch'>
       {products?.filter(Boolean).map((product, index) => {
-        // ✅ Added index
         return (
           <AnimatePresence key={product._id}>
             <motion.div
-              className='flex justify-center relative'
+              className='flex flex-col h-full'
               layout
-              initial={{ opacity: 0.2 }}
-              animate={{ opacity: 1 }}
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
+              transition={{ duration: 0.3, delay: index * 0.04 }}
             >
-              <span className='absolute bottom-2 right-2 z-10'>
-                <AddToBasketButton product={product} />
-              </span>
               <ProductThumb
                 key={product._id}
                 product={product}
-                priority={index < 4} // ✅ First 4 products load eagerly
+                priority={index < 4}
               />
             </motion.div>
           </AnimatePresence>
@@ -35,3 +31,5 @@ const ProductGrid = ({ products }: { products: Product[] }) => {
 };
 
 export default ProductGrid;
+
+

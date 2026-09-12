@@ -3,6 +3,9 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "DressCode - Ruddy Autem",
   description: "DressCode - Ruddy Autem",
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({

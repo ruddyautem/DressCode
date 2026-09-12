@@ -12,28 +12,36 @@
 
 ### 📋 Présentation
 
-Bienvenue sur le code source de **DressCode**. Développeur Full Stack, j'avais envie d'explorer l'écosystème e-commerce moderne, alors j'ai construit cette boutique en ligne de A à Z. C'est une application Next.js 16 qui intègre des solutions robustes : **Clerk** pour une authentification sans friction, **Sanity** comme CMS headless pour gérer le catalogue de produits, et **Stripe** pour le traitement sécurisé des paiements.
+Bienvenue sur le code source de **DressCode**. Développeur Full Stack, j'avais envie d'explorer l'écosystème e-commerce moderne, alors j'ai construit cette boutique en ligne de A à Z. C'est une application Next.js 16 qui intègre des solutions robustes : **Clerk** pour une authentification sans friction, **Sanity** comme CMS headless pour gérer le catalogue de produits, **Stripe** pour le traitement sécurisé des paiements, et une **internationalisation native (FR / EN)** complète.
+
+### 🌐 Internationalisation (i18n)
+
+L'application supporte nativement et dynamiquement le français et l'anglais :
+- **Bascule instantanée** : Sélecteur de langue dans l'en-tête alimenté par un `LanguageContext` et `next-intl`.
+- **Traductions exhaustives** : Navigation, bannières, fiche produit, panier, processus de paiement et page de confirmation.
+- **Clerk bilingue** : Les modales et composants d'authentification Clerk s'adaptent instantanément à la langue sélectionnée (`frFR` / `enUS`).
+- **Stripe Checkout localisé** : La langue active de l'utilisateur est transmise à la session Stripe Checkout pour un paiement dans sa langue.
 
 ### 📑 Les pages
 
 | Route | Ce qu'on y trouve |
 | --- | --- |
-| `/` (Accueil) | Une vitrine avec les promotions en cours, les catégories, et une grille de produits |
-| `/product/[slug]` | La fiche détaillée d'un article, son prix, et l'ajout au panier |
-| `/categories/[slug]` | Un filtre dynamique pour naviguer facilement parmi les produits d'une catégorie |
-| `/search` | Un moteur de recherche pour trouver rapidement un article précis |
-| `/basket` | Le panier d'achat, géré localement avec Zustand pour plus de rapidité avant le paiement |
-| `/success` | La page de confirmation post-paiement, qui vide le panier au passage |
-| `/orders` | L'historique des commandes, accessible uniquement aux utilisateurs connectés |
-| `/studio` | Le back-office d'administration (Sanity Studio) embarqué directement dans l'application |
+| `/` (Accueil) | Vitrine avec bannière promotionnelle réactive (soldes saisonnières FR/EN), catégories et grille de produits |
+| `/product/[slug]` | Fiche détaillée d'un article, sélection dynamique des tailles disponibles et ajout au panier |
+| `/categories/[slug]` | Filtre dynamique pour naviguer facilement parmi les produits d'une catégorie |
+| `/search` | Moteur de recherche pour trouver rapidement un article précis avec filtres par badges |
+| `/basket` | Panier d'achat (Zustand) avec carte de test Stripe intégrée (copie 1-clic) et modal de confirmation de suppression |
+| `/success` | Page de confirmation post-paiement bilingue avec numéro de commande centré |
+| `/orders` | Historique des commandes, accessible uniquement aux utilisateurs connectés |
+| `/studio` | Back-office d'administration (Sanity Studio) embarqué directement dans l'application |
 
 ### 💳 Paiements & Webhooks
 
-Afin de garantir une sécurité maximale, tout le processus de paiement est délégué à Stripe Checkout. Une fois le paiement validé, un webhook sécurisé écoute les événements de Stripe et se charge de créer la commande correspondante directement dans le CMS Sanity.
+Afin de garantir une sécurité maximale, tout le processus de paiement est délégué à Stripe Checkout. Une fois le paiement validé, un webhook sécurisé écoute les événements de Stripe et se charge de créer la commande correspondante directement dans le CMS Sanity. Sur la page panier, une carte de test Stripe stylisée noir & blanc avec copie en un clic est mise à disposition pour tester les paiements en mode sandbox en toute simplicité.
 
-### 📦 Gestion du contenu
+### 📦 Gestion du contenu & Promotions
 
-Le catalogue entier vit sur Sanity (v6), ce qui permet d'ajouter des produits ou lancer des soldes sans toucher au code. Les requêtes sont optimisées via les API de cache de Next.js pour que les pages se chargent instantanément tout en conservant des données à jour.
+Le catalogue entier vit sur Sanity (v6), ce qui permet d'ajouter des produits ou lancer des soldes sans toucher au code. Les coupons de réduction (ex: `HIVER` / `WINTER`, `BFRIDAY`) sont validés et typés avec TypeScript pour éviter toute incohérence.
 
 ### 🛡️ Sécurité & Validation
 
@@ -47,9 +55,10 @@ L'application utilise **Zod** comme rempart de sécurité au moment de l'exécut
 | Langage | TypeScript |
 | Package manager | Bun |
 | Styling | Tailwind CSS v4 |
+| Internationalisation | next-intl + Custom LanguageContext |
 | CMS & Back-office | Sanity v6 |
-| Authentification | Clerk (Core 3) |
-| Paiement & Webhooks | Stripe |
+| Authentification | Clerk (Core 3 avec localisation FR/EN) |
+| Paiement & Webhooks | Stripe Checkout |
 | State Management | Zustand |
 | Validation de Données | Zod |
 | UI & Icônes | shadcn/ui, Lucide React |
@@ -59,19 +68,22 @@ L'application utilise **Zod** comme rempart de sécurité au moment de l'exécut
 
 ```
 dresscode-ecommerce/
-├── actions/                     # Actions côté serveur (ex: créer la session Stripe)
+├── actions/                     # Actions côté serveur (ex: créer la session Stripe localisée)
+├── messages/                    # Catalogues de traduction (fr.json, en.json)
+├── public/                      # Assets statiques & Favicon SVG officiel squircle
 ├── src/
 │   ├── app/
 │   │   ├── (store)/             # Ce que le client voit (Accueil, Panier, Commandes...)
 │   │   ├── api/
 │   │   │   └── webhook/         # Point d'entrée pour les événements Stripe
 │   │   ├── studio/              # Le panneau d'administration Sanity
+│   │   ├── icon.svg             # Favicon SVG moderne Next.js
 │   │   └── globals.css          # Styles globaux et variables Tailwind v4
-│   ├── components/              # Composants UI réutilisables (Header, ProductGrid...)
+│   ├── components/              # Composants UI (Header, BannerClient, BottomNav, ProductDetailClient...)
+│   ├── context/                 # LanguageContext pour la gestion de la langue & Clerk provider
+│   ├── i18n/                    # Configuration des requêtes i18n
 │   ├── lib/                     # Utilitaires (formatage prix, configuration Stripe)
-│   ├── sanity/                  # Configuration du CMS
-│   │   ├── schemaTypes/         # Structure des Produits, Commandes, etc.
-│   │   └── lib/                 # Logique de récupération des données
+│   ├── sanity/                  # Configuration du CMS & schémas (couponCodes typés)
 │   └── proxy.ts                 # Middleware pour la protection des routes (Clerk)
 ├── .env.local                   # Variables d'environnement (Stripe, Sanity, Clerk)
 ├── package.json
@@ -102,28 +114,36 @@ Je suis Ruddy Autem, développeur Full Stack. Si le code vous inspire ou que vou
 
 ### 📋 Overview
 
-Welcome to the source code of **DressCode**. As a Full Stack developer, I wanted to explore the modern e-commerce ecosystem, so I built this online store from scratch. It's a Next.js 16 app integrating robust solutions: **Clerk** for frictionless authentication, **Sanity** as a headless CMS to manage the product catalog, and **Stripe** for secure payment processing.
+Welcome to the source code of **DressCode**. As a Full Stack developer, I wanted to explore the modern e-commerce ecosystem, so I built this online store from scratch. It's a Next.js 16 app integrating robust solutions: **Clerk** for frictionless authentication, **Sanity** as a headless CMS to manage the product catalog, **Stripe** for secure payment processing, and **full native internationalization (FR / EN)**.
+
+### 🌐 Internationalization (i18n)
+
+The app natively and dynamically supports French and English:
+- **Instant Switching**: Language toggle in the header backed by a `LanguageContext` and `next-intl`.
+- **Comprehensive Translations**: Navigation, promotional banners, product details, shopping cart, checkout flow, and confirmation screen.
+- **Bilingual Clerk**: Authentication popovers and user profile modals dynamically adapt to the selected locale (`frFR` / `enUS`).
+- **Localized Stripe Checkout**: The active user language is forwarded to the Stripe Checkout session for a native localized payment experience.
 
 ### 📑 Pages
 
 | Route | What's there |
 | --- | --- |
-| `/` (Home) | A storefront featuring active promotions, categories, and a product grid |
-| `/product/[slug]` | A detailed product page with pricing and the add-to-cart action |
-| `/categories/[slug]` | A dynamic filter to easily browse items within a specific category |
-| `/search` | A search engine to quickly find a specific item |
-| `/basket` | The shopping cart, managed locally with Zustand for speed before checkout |
-| `/success` | The post-payment confirmation page, which clears the cart |
+| `/` (Home) | Storefront with responsive promo banner (seasonal sales in FR/EN), categories, and product grid |
+| `/product/[slug]` | Detailed product page with dynamic available size parsing and add-to-cart action |
+| `/categories/[slug]` | Dynamic category filtering with horizontal pill scrolling on mobile |
+| `/search` | Search engine to quickly find items with badge filters |
+| `/basket` | Shopping cart (Zustand) with integrated B&W Stripe test card box (1-click copy) and delete confirmation modal |
+| `/success` | Bilingual post-payment confirmation page with centered order identifier |
 | `/orders` | Order history, accessible only to logged-in users |
-| `/studio` | The administration back-office (Sanity Studio) embedded directly into the app |
+| `/studio` | Administration back-office (Sanity Studio) embedded directly into the app |
 
 ### 💳 Payments & Webhooks
 
-To ensure maximum security, the entire payment process is delegated to Stripe Checkout. Once a payment is successful, a secure webhook listens to Stripe events and handles creating the corresponding order directly inside the Sanity CMS.
+To ensure maximum security, the entire payment process is delegated to Stripe Checkout. Once a payment is successful, a secure webhook listens to Stripe events and handles creating the corresponding order directly inside the Sanity CMS. On the basket page, a sleek black-and-white Stripe test card box with 1-click copy allows seamless testing in sandbox mode.
 
-### 📦 Content Management
+### 📦 Content Management & Sales
 
-The entire catalog lives on Sanity (v6), allowing me to add products or run sales without touching the code. Data fetching is optimized using Next.js caching APIs so pages load instantly while keeping the data fresh.
+The entire catalog lives on Sanity (v6), allowing you to add products or run sales without touching the code. Discount coupon codes (e.g. `HIVER` / `WINTER`, `BFRIDAY`) are strictly typed in TypeScript to prevent runtime errors.
 
 ### 🛡️ Security & Validation
 
@@ -137,9 +157,10 @@ The application uses **Zod** as a security gatekeeper at runtime. Environment va
 | Language | TypeScript |
 | Package manager | Bun |
 | Styling | Tailwind CSS v4 |
+| Internationalization | next-intl + Custom LanguageContext |
 | CMS & Back-office | Sanity v6 |
-| Authentication | Clerk (Core 3) |
-| Payments & Webhooks | Stripe |
+| Authentication | Clerk (Core 3 with FR/EN localization) |
+| Payments & Webhooks | Stripe Checkout |
 | State Management | Zustand |
 | Data Validation | Zod |
 | UI & Icons | shadcn/ui, Lucide React |
@@ -149,19 +170,22 @@ The application uses **Zod** as a security gatekeeper at runtime. Environment va
 
 ```
 dresscode-ecommerce/
-├── actions/                     # Server actions (e.g., creating a Stripe session)
+├── actions/                     # Server actions (e.g., creating localized Stripe sessions)
+├── messages/                    # Translation catalogs (fr.json, en.json)
+├── public/                      # Static assets & official squircle SVG favicon
 ├── src/
 │   ├── app/
 │   │   ├── (store)/             # What the end user sees (Home, Cart, Orders...)
 │   │   ├── api/
 │   │   │   └── webhook/         # Endpoint for Stripe events
 │   │   ├── studio/              # The Sanity admin panel
+│   │   ├── icon.svg             # Modern Next.js SVG favicon
 │   │   └── globals.css          # Global styles and Tailwind v4 variables
-│   ├── components/              # Reusable UI components (Header, ProductGrid...)
+│   ├── components/              # UI components (Header, BannerClient, BottomNav, ProductDetailClient...)
+│   ├── context/                 # LanguageContext for state & dynamic Clerk provider
+│   ├── i18n/                    # i18n request configuration
 │   ├── lib/                     # Utilities (price formatting, Stripe config)
-│   ├── sanity/                  # CMS configuration
-│   │   ├── schemaTypes/         # Structure of Products, Orders, etc.
-│   │   └── lib/                 # Data fetching logic
+│   ├── sanity/                  # CMS configuration & schemas (typed couponCodes)
 │   └── proxy.ts                 # Route protection middleware (Clerk)
 ├── .env.local                   # Environment variables (Stripe, Sanity, Clerk)
 ├── package.json

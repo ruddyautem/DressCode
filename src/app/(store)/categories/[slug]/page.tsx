@@ -1,7 +1,7 @@
-import ProductsViews from "@/components/ProductsView";
 import { getAllCategories } from "@/sanity/lib/products/getAllCategories";
 import { getProductsByCategory } from "@/sanity/lib/products/getProductsByCategory";
 import { Metadata } from "next";
+import CategoryClient from "@/components/CategoryClient";
 
 export async function generateMetadata({
   params,
@@ -16,8 +16,8 @@ export async function generateMetadata({
     .join(" ");
 
   return {
-    title: `${title} | DressCode`,
-    description: `Découvrez notre collection de ${title} sur DressCode.`,
+    title: `Collection ${title} | DressCode`,
+    description: `Découvrez notre collection exclusive de ${title} sur DressCode.`,
   };
 }
 
@@ -31,22 +31,14 @@ const CategoryPage = async ({
   const categories = await getAllCategories();
 
   return (
-    <div className='flex flex-col items-center justify-top min-h-screen bg-gray-100 p-4'>
-      <div className='bg-white p-8 rounded-lg shadow-md w-full max-w-7xl'>
-        <h1 className='text-3xl font-bold mb-6 text-center'>
-          {slug
-            .split("-")
-            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-            .join(" ")}{" "}
-          Collection
-        </h1>
-        <ProductsViews
-          products={products}
-          categories={categories}
-        />
-      </div>
-    </div>
+    <CategoryClient
+      slug={slug}
+      products={products}
+      categories={categories}
+    />
   );
 };
 
 export default CategoryPage;
+
+

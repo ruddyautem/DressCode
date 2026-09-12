@@ -68,4 +68,32 @@ body {
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
   }
+
+  .cl-userButtonPopoverCard {
+    transform-origin: top right !important;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  @media (max-width: 639px) {
+    [data-sonner-toaster] [data-sonner-toast] {
+      text-align: center !important;
+      justify-content: center !important;
+    }
+    [data-sonner-toaster] [data-sonner-toast] [data-content] {
+      text-align: center !important;
+      width: 100% !important;
+    }
+    [data-sonner-toaster] [data-sonner-toast] [data-title],
+    [data-sonner-toaster] [data-sonner-toast] [data-description] {
+      text-align: center !important;
+      width: 100% !important;
+    }
+  }
 }

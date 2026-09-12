@@ -19,12 +19,12 @@ export type Metadata = z.infer<typeof MetadataSchema>;
 export type GroupedBasketItem = {
   product: BasketItem["product"];
   quantity: number;
+  size?: string;
 };
 
 // Constants
 const STRIPE_CONFIG = {
   currency: "eur",
-  locale: "fr" as const,
   customerSearchLimit: 1,
   centsToDollarMultiplier: 100,
 } as const;
@@ -62,30 +62,35 @@ function getBaseURL(): string {
 
 // In createCheckoutSession.ts, update the createLineItems function:
 function createLineItems(items: GroupedBasketItem[]) {
-  return items.map((item) => ({
-    price_data: {
-      currency: STRIPE_CONFIG.currency,
-      unit_amount: Math.round(
-        item.product.price! * STRIPE_CONFIG.centsToDollarMultiplier
-      ),
-      product_data: {
-        name: item.product.name || "Unnamed Product",
-        description: `Product ID: ${item.product._id}`,
-        metadata: {
-          sanityProductId: item.product._id, // Use the Sanity product ID
+  return items.map((item) => {
+    const sizeSuffix = item.size ? ` (Taille: ${item.size})` : "";
+    return {
+      price_data: {
+        currency: STRIPE_CONFIG.currency,
+        unit_amount: Math.round(
+          item.product.price! * STRIPE_CONFIG.centsToDollarMultiplier
+        ),
+        product_data: {
+          name: `${item.product.name || "Unnamed Product"}${sizeSuffix}`,
+          description: `Product ID: ${item.product._id}${item.size ? ` | Taille: ${item.size}` : ""}`,
+          metadata: {
+            sanityProductId: item.product._id, // Use the Sanity product ID
+            size: item.size || "Taille Unique",
+          },
+          images: item.product.image
+            ? [imageUrl(item.product.image) || ""]
+            : undefined,
         },
-        images: item.product.image
-          ? [imageUrl(item.product.image) || ""]
-          : undefined,
       },
-    },
-    quantity: item.quantity,
-  }));
+      quantity: item.quantity,
+    };
+  });
 }
 
 export async function createCheckoutSession(
   items: GroupedBasketItem[],
-  metadata: Metadata
+  metadata: Metadata,
+  locale?: string
 ): Promise<string | null> {
   try {
     // 1. Zod runtime validation of items
@@ -102,6 +107,9 @@ export async function createCheckoutSession(
     const successUrl = `${baseURL}/success?session_id={CHECKOUT_SESSION_ID}&orderNumber=${validatedMetadata.orderNumber}`;
     const cancelUrl = `${baseURL}/basket`;
 
+    // Stripe checkout locale: French by default, or English if explicitly selected
+    const stripeLocale = locale === "en" ? "en" : "fr";
+
     // Create checkout session
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
@@ -112,7 +120,7 @@ export async function createCheckoutSession(
       allow_promotion_codes: true,
       success_url: successUrl,
       cancel_url: cancelUrl,
-      locale: STRIPE_CONFIG.locale,
+      locale: stripeLocale,
       line_items: createLineItems(items),
     });
 

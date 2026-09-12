@@ -1,59 +1,88 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import useBasketStore from "../store";
+import { CheckCircle2, Package, ShoppingBag, Sparkles } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
 
-const SuccessPage = () => {
-  const orderNumber = useSearchParams().get("orderNumber");
+function SuccessContent() {
+  const searchParams = useSearchParams();
+  const orderNumber = searchParams.get("orderNumber");
   const clearBasket = useBasketStore((state) => state.clearBasket);
+  const { t } = useLanguage();
 
   useEffect(() => {
     if (orderNumber) clearBasket();
   }, [orderNumber, clearBasket]);
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50">
-      <div className="bg-white p-12 rounded-xl shadow-lg max-w-2xl w-full mx-4 text-center">
-        {/* Success Icon */}
-        <div className="h-16 w-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-8">
-          <svg className="h-8 w-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-          </svg>
+    <div className='min-h-[80vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8'>
+      <div className='bg-white rounded-3xl border border-slate-200/80 shadow-xl max-w-lg w-full p-8 sm:p-10 text-center relative overflow-hidden'>
+        {/* Ligne accentuée haute */}
+        <div className='absolute top-0 left-0 right-0 h-1.5 bg-slate-950' />
+
+        {/* Badge de succès */}
+        <div className='w-16 h-16 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-emerald-100 shadow-xs'>
+          <CheckCircle2 className='w-8 h-8' />
         </div>
 
-        <h1 className="text-4xl font-bold mb-6">Merci pour votre commande!</h1>
-        
-        <div className="border-t border-b border-gray-200 py-6 mb-6 space-y-4">
-          <p className="text-lg text-gray-700">
-            Votre commande est confirmée et sera expédiée au plus vite!
-          </p>
+        <div className='inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 text-slate-600 text-[11px] font-semibold tracking-wider uppercase mb-3'>
+          <Sparkles className='w-3 h-3 text-slate-900' />
+          {t("orderValidated")}
+        </div>
 
-          {orderNumber && (
-            <p className="text-gray-600">
-              <span>Numéro de Commande: </span>
-              <span className="font-mono text-sm text-green-600">{orderNumber}</span>
+        <h1 className='text-2xl sm:text-3xl font-black text-slate-900 tracking-tight mb-2'>
+          {t("successThanks")}
+        </h1>
+
+        <p className='text-slate-500 text-sm mb-6'>
+          {t("successDesc")}
+        </p>
+
+        {orderNumber && (
+          <div className='bg-slate-50 rounded-2xl p-4 border border-slate-200/80 mb-6 text-center space-y-1.5'>
+            <span className='text-[10px] font-bold text-slate-400 uppercase tracking-wider block text-center'>
+              {t("orderId")}
+            </span>
+            <p className='font-mono font-bold text-xs sm:text-sm text-slate-900 break-all text-center'>
+              {orderNumber}
             </p>
-          )}
+          </div>
+        )}
 
-          <p className="text-gray-600">
-            Un email de confirmation a été envoyé sur votre adresse email.
-          </p>
+        <div className='text-xs text-slate-400 mb-8 leading-relaxed'>
+          {t("successEmailNote")}
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Button asChild className="bg-green-600 hover:bg-green-700">
-            <Link href="/orders">Détails de votre commande</Link>
-          </Button>
-          <Button asChild variant="outline">
-            <Link href="/">Continuer vos achats</Link>
-          </Button>
+        <div className='flex flex-col sm:flex-row gap-3 justify-center'>
+          <Link
+            href='/orders'
+            className='inline-flex items-center justify-center gap-2 px-5 py-3 rounded-2xl bg-slate-950 hover:bg-slate-800 text-white text-xs sm:text-sm font-semibold transition-all shadow-md'
+          >
+            <Package className='w-4 h-4' />
+            <span>{t("trackOrder")}</span>
+          </Link>
+          <Link
+            href='/'
+            className='inline-flex items-center justify-center gap-2 px-5 py-3 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs sm:text-sm font-semibold transition-all'
+          >
+            <ShoppingBag className='w-4 h-4' />
+            <span>{t("backToShop")}</span>
+          </Link>
         </div>
       </div>
     </div>
   );
+}
+
+const SuccessPage = () => {
+  return (
+    <Suspense fallback={<div className='min-h-screen flex items-center justify-center'>Chargement...</div>}>
+      <SuccessContent />
+    </Suspense>
+  );
 };
 
-export default SuccessPage;
+export default SuccessPage;
