@@ -37,7 +37,7 @@
   "noProducts": "Aucun article disponible",
   "yourBasket": "Mon Panier",
   "basketEmpty": "Votre panier est vide",
-  "basketEmptyDesc": "Découvrez nos collections capsules et ajoutez vos pièces favorites.",
+  "basketEmptyDesc": "Découvrez nos incontournables et composez votre sélection.",
   "continueShopping": "Continuer mes achats",
   "discoverCollection": "Découvrir la collection",
   "summary": "Récapitulatif",
@@ -80,7 +80,7 @@
   "securePayment": "Paiement 100% Sécurisé",
   "authenticGuarantee": "Authenticité certifiée",
   "searchTitle": "Rechercher une pièce",
-  "searchSubtitle": "Trouvez les créations parfaites parmi tout notre vestiaire.",
+  "searchSubtitle": "Découvrez nos incontournables et composez votre sélection.",
   "resultsFor": "Résultats pour",
   "resultsFound": "résultats trouvés",
   "enterSearch": "Entrez votre recherche",
@@ -117,5 +117,9 @@
   "successEmailNote": "Un email récapitulatif ainsi que votre facture détaillée ont été envoyés à votre adresse.",
   "trackOrder": "Suivre ma commande",
   "backToShop": "Retourner au shop",
-  "loading": "Chargement..."
+  "loading": "Chargement...",
+  "inCategory": "dans",
+  "categoryLabel": "Catégorie",
+  "resetFilters": "Réinitialiser les filtres",
+  "searchInputPlaceholder": "T-shirt, Hoodie, Veste, Pantalon..."
 }

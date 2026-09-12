@@ -17,7 +17,7 @@ interface AddToBasketButtonProps {
 const AddToBasketButton = ({ product, size, disabled, disableToast = false }: AddToBasketButtonProps) => {
   const addItem = useBasketStore((state) => state.addItem);
   const removeItem = useBasketStore((state) => state.removeItem);
-  const { t, language } = useLanguage();
+  const { t } = useLanguage();
   const itemCount = useBasketStore((state) => {
     if (size !== undefined) {
       return (

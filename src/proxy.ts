@@ -1,10 +1,11 @@
 import { clerkMiddleware } from "@clerk/nextjs/server";
 
-import { NextRequest } from "next/server";
+import { NextRequest, NextFetchEvent } from "next/server";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const middleware = clerkMiddleware({ clockSkewInMs: 5 * 60 * 1000 } as any);
 
-export function proxy(request: NextRequest, event: any) {
+export function proxy(request: NextRequest, event: NextFetchEvent) {
   return middleware(request, event);
 }
 

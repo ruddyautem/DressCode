@@ -37,7 +37,7 @@
   "noProducts": "No items available",
   "yourBasket": "My Cart",
   "basketEmpty": "Your cart is empty",
-  "basketEmptyDesc": "Explore our capsule collections and add your favorite pieces.",
+  "basketEmptyDesc": "Discover our must-haves and curate your selection.",
   "continueShopping": "Continue shopping",
   "discoverCollection": "Discover the collection",
   "summary": "Order Summary",
@@ -80,7 +80,7 @@
   "securePayment": "100% Secure Checkout",
   "authenticGuarantee": "Certified Authentic",
   "searchTitle": "Search for an item",
-  "searchSubtitle": "Find the perfect pieces across our curated wardrobe.",
+  "searchSubtitle": "Discover our must-haves and curate your selection.",
   "resultsFor": "Results for",
   "resultsFound": "results found",
   "enterSearch": "Enter your search",
@@ -117,5 +117,9 @@
   "successEmailNote": "A confirmation email and your detailed invoice have been sent to your inbox.",
   "trackOrder": "Track my order",
   "backToShop": "Back to shop",
-  "loading": "Loading..."
+  "loading": "Loading...",
+  "inCategory": "in",
+  "categoryLabel": "Category",
+  "resetFilters": "Reset filters",
+  "searchInputPlaceholder": "T-shirt, Hoodie, Jacket, Pants..."
 }

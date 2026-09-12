@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { urlForProduct } from "@/lib/imageUrl";
 import { Product } from "../../sanity.types";
 import { PortableText } from "next-sanity";
@@ -28,14 +28,12 @@ interface ProductDetailClientProps {
 
 export default function ProductDetailClient({ product }: ProductDetailClientProps) {
   const { t, translateProductName, translateProductDesc } = useLanguage();
-  const { addMultipleItems, getItemCount } = useBasketStore();
+  const { addMultipleItems } = useBasketStore();
   const [justAdded, setJustAdded] = useState(false);
   const [quantity, setQuantity] = useState<number>(1);
 
   // Détection du type de vêtement pour les tailles
-  const categoriesList = (product as any).categories as
-    | Array<{ title?: string; slug?: { current?: string } } | string>
-    | undefined;
+  const categoriesList = (product as { categories?: Array<{ title?: string; slug?: { current?: string } } | string> }).categories;
 
   const categorySlugs = Array.isArray(categoriesList)
     ? categoriesList.map((cat) => (typeof cat === "string" ? cat : cat.slug?.current || "")).filter(Boolean)
@@ -92,11 +90,6 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
   );
 
 
-  const [isClient, setIsClient] = useState(false);
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
   const isOutOfStock = product.stock != null && product.stock <= 0;
   const sizeToQuery = isAccessory ? "TAILLE UNIQUE" : selectedSize;
 
@@ -111,14 +104,11 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
 
   const productName = translateProductName(product.name, product.slug?.current);
 
-  const [addedCount, setAddedCount] = useState<number>(1);
-
   const handleAddToBasket = () => {
     if (isOutOfStock) return;
     const sizeToSave = isAccessory ? "TAILLE UNIQUE" : selectedSize;
     const quantityToAdd = quantity;
     addMultipleItems(product, quantityToAdd, sizeToSave);
-    setAddedCount(quantityToAdd);
     setJustAdded(true);
     setQuantity(1); // Réinitialiser le sélecteur à 1 après ajout
     const totalCount = currentItemCount + quantityToAdd;

@@ -3,6 +3,7 @@
 import { imageUrl } from "@/lib/imageUrl";
 import { BasketItem } from "@/app/(store)/store";
 import stripe from "@/lib/stripe";
+import type Stripe from "stripe";
 
 import { z } from "zod";
 import { env } from "@/lib/env";
@@ -184,8 +185,8 @@ export async function syncOrderFromSession(sessionId: string) {
     );
 
     const sanityProducts = lineItemsWithProduct.data.map((item) => {
-      const sanityProductId = (item.price?.product as any)?.metadata
-        ?.sanityProductId;
+      const stripeProduct = item.price?.product as Stripe.Product | undefined;
+      const sanityProductId = stripeProduct?.metadata?.sanityProductId;
 
       return {
         _key: Math.random().toString(36).substring(2, 11),
@@ -203,10 +204,15 @@ export async function syncOrderFromSession(sessionId: string) {
       orderNumber,
       stripeCheckoutSessionId: id,
       stripePaymentIntentId:
-        typeof payment_intent === "string" ? payment_intent : (payment_intent as any)?.id,
+        typeof payment_intent === "string"
+          ? payment_intent
+          : (payment_intent as Stripe.PaymentIntent | null)?.id,
       customerName: customerName || "Client",
       email: customerEmail,
-      stripeCustomerId: typeof customer === "string" ? customer : (customer as any)?.id,
+      stripeCustomerId:
+        typeof customer === "string"
+          ? customer
+          : (customer as Stripe.Customer | null)?.id,
       clerkUserId,
       currency: currency || "eur",
       amountDiscount: total_details?.amount_discount

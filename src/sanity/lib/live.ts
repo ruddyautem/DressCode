@@ -18,6 +18,7 @@ const previewClient = client.withConfig({
 });
 
 // Main sanityFetch function - replaces defineLive behavior
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function sanityFetch<T = any>({
   query,
   params = {},
@@ -25,6 +26,7 @@ export async function sanityFetch<T = any>({
   preview = false, // Optional: true for draft/preview mode
 }: {
   query: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   params?: Record<string, any>;
   tags?: string[];
   preview?: boolean;

@@ -31,10 +31,8 @@ const BasketPage = () => {
   const [cardCopied, setCardCopied] = useState(false);
   const [deleteModal, setDeleteModal] = useState<{
     isOpen: boolean;
-    type: "single" | "multiple";
-    itemToDelete?: { productId: string; size?: string; name: string };
     count?: number;
-  }>({ isOpen: false, type: "multiple" });
+  }>({ isOpen: false });
 
   const copyTestCard = () => {
     navigator.clipboard.writeText("4242424242424242");
@@ -102,55 +100,29 @@ const BasketPage = () => {
     if (selectedKeys.length === 0) return;
     setDeleteModal({
       isOpen: true,
-      type: "multiple",
       count: selectedKeys.length,
-    });
-  };
-
-  // Open confirmation modal for a single item
-  const promptDeleteSingle = (productId: string, size: string | undefined, name: string) => {
-    setDeleteModal({
-      isOpen: true,
-      type: "single",
-      itemToDelete: { productId, size, name },
     });
   };
 
   // Execute deletion after confirmation
   const handleConfirmDelete = () => {
-    if (deleteModal.type === "multiple") {
-      const itemsToRemove = selectedKeys.map((key) => {
-        const [productId, size] = key.split("::");
-        return {
-          productId,
-          size: size ? size : undefined,
-        };
-      });
+    const itemsToRemove = selectedKeys.map((key) => {
+      const [productId, size] = key.split("::");
+      return {
+        productId,
+        size: size ? size : undefined,
+      };
+    });
 
-      const count = itemsToRemove.length;
-      removeMultipleItems(itemsToRemove);
-      setSelectedKeys([]);
+    const count = itemsToRemove.length;
+    removeMultipleItems(itemsToRemove);
+    setSelectedKeys([]);
+    if (count === 1) {
+      toast.info(t("notifRemoved"));
+    } else {
       toast.info(t("notifMultipleRemoved", { count }));
-    } else if (deleteModal.type === "single" && deleteModal.itemToDelete) {
-      const itemName = deleteModal.itemToDelete.name;
-      const sizeLabel = deleteModal.itemToDelete.size ? ` (${deleteModal.itemToDelete.size})` : "";
-      removeMultipleItems([
-        {
-          productId: deleteModal.itemToDelete.productId,
-          size: deleteModal.itemToDelete.size,
-        },
-      ]);
-      const key = getItemKey(
-        deleteModal.itemToDelete.productId,
-        deleteModal.itemToDelete.size
-      );
-      setSelectedKeys((prev) => prev.filter((k) => k !== key));
-      toast.info(t("notifRemoved"), {
-        description: `${itemName}${sizeLabel}`,
-      });
     }
-
-    setDeleteModal({ isOpen: false, type: "multiple" });
+    setDeleteModal({ isOpen: false });
   };
 
   if (groupedItems.length === 0) {
@@ -457,21 +429,19 @@ const BasketPage = () => {
                 {t("confirmDeleteTitle")}
               </h3>
               <p className='text-sm text-slate-500 mt-2 leading-relaxed'>
-                {deleteModal.type === "multiple"
-                  ? t("confirmDeleteMultipleMsg").replace(
+                {(deleteModal.count || selectedKeys.length) === 1
+                  ? t("confirmDeleteOneMsg")
+                  : t("confirmDeleteMultipleMsg").replace(
                       "{count}",
                       String(deleteModal.count || selectedKeys.length)
-                    )
-                  : deleteModal.itemToDelete?.name
-                  ? `${t("confirmDeleteOneMsg")} (${deleteModal.itemToDelete.name})`
-                  : t("confirmDeleteOneMsg")}
+                    )}
               </p>
             </div>
 
             <div className='grid grid-cols-2 gap-3 pt-2'>
               <button
                 type='button'
-                onClick={() => setDeleteModal({ isOpen: false, type: "multiple" })}
+                onClick={() => setDeleteModal({ isOpen: false })}
                 className='w-full py-3 px-4 rounded-2xl font-bold text-sm bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors cursor-pointer'
               >
                 {t("cancel")}

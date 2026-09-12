@@ -2,7 +2,6 @@
 
 import {
   ClerkLoaded,
-  Show,
   SignInButton,
   UserButton,
   useUser,
