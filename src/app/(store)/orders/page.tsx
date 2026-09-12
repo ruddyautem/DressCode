@@ -1,5 +1,8 @@
 // src/app/(store)/orders/page.tsx
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 import { formatCurrency } from "@/lib/formatCurrency";
 import { imageUrl } from "@/lib/imageUrl";
 import { getMyOrders } from "@/sanity/lib/orders/getMyOrders";

@@ -130,3 +130,103 @@ export async function createCheckoutSession(
     throw error;
   }
 }
+
+export async function syncOrderFromSession(sessionId: string) {
+  if (!sessionId) {
+    return { success: false, error: "No session ID provided" };
+  }
+
+  try {
+    const { client } = await import("@/sanity/lib/client");
+
+    // 1. Récupérer la session directement depuis Stripe
+    const session = await stripe.checkout.sessions.retrieve(sessionId, {
+      expand: ["line_items", "line_items.data.price.product"],
+    });
+
+    if (session.payment_status !== "paid") {
+      return { success: false, error: "Payment not completed" };
+    }
+
+    const {
+      id,
+      amount_total,
+      currency,
+      metadata,
+      payment_intent,
+      customer,
+      total_details,
+    } = session;
+
+    if (!metadata) {
+      return { success: false, error: "No metadata found on session" };
+    }
+
+    const { orderNumber, customerName, customerEmail, clerkUserId } =
+      metadata as unknown as Metadata;
+
+    // 2. Vérifier si la commande existe déjà dans Sanity (évite les doublons)
+    const existingOrder = await client.fetch(
+      `*[_type == "order" && (stripeCheckoutSessionId == $sessionId || orderNumber == $orderNumber)][0]`,
+      { sessionId: id, orderNumber }
+    );
+
+    if (existingOrder) {
+      return { success: true, orderId: existingOrder._id, alreadyExists: true };
+    }
+
+    // 3. Récupérer les articles avec détails du produit
+    const lineItemsWithProduct = await stripe.checkout.sessions.listLineItems(
+      id,
+      {
+        expand: ["data.price.product"],
+      }
+    );
+
+    const sanityProducts = lineItemsWithProduct.data.map((item) => {
+      const sanityProductId = (item.price?.product as any)?.metadata
+        ?.sanityProductId;
+
+      return {
+        _key: Math.random().toString(36).substring(2, 11),
+        product: {
+          _type: "reference",
+          _ref: sanityProductId,
+        },
+        quantity: item.quantity || 1,
+      };
+    });
+
+    // 4. Créer la commande dans Sanity
+    const orderData = {
+      _type: "order",
+      orderNumber,
+      stripeCheckoutSessionId: id,
+      stripePaymentIntentId:
+        typeof payment_intent === "string" ? payment_intent : (payment_intent as any)?.id,
+      customerName: customerName || "Client",
+      email: customerEmail,
+      stripeCustomerId: typeof customer === "string" ? customer : (customer as any)?.id,
+      clerkUserId,
+      currency: currency || "eur",
+      amountDiscount: total_details?.amount_discount
+        ? total_details.amount_discount / 100
+        : 0,
+      products: sanityProducts,
+      totalPrice: amount_total ? amount_total / 100 : 0,
+      status: "paid",
+      orderDate: new Date().toISOString(),
+    };
+
+    const newOrder = await client.create(orderData);
+    console.log("✅ Order created via syncOrderFromSession:", newOrder._id);
+
+    return { success: true, orderId: newOrder._id, alreadyExists: false };
+  } catch (error) {
+    console.error("❌ Error in syncOrderFromSession:", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+    };
+  }
+}

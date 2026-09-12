@@ -9,7 +9,7 @@ import { client } from "@/sanity/lib/client";
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.text();
+    const rawBody = await req.text();
     const sig = (await headers()).get("stripe-signature");
 
     console.log("🔥 WEBHOOK HIT");
@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
 
     let event: Stripe.Event;
     try {
-      event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
+      event = await stripe.webhooks.constructEventAsync(rawBody, sig, webhookSecret);
       console.log("✅ Webhook signature verified");
       console.log("📨 Event type:", event.type);
     } catch (error) {
@@ -142,6 +142,17 @@ async function createOrderInSanity(session: Stripe.Checkout.Session) {
       orderStatus = "paid"; // "Payé"
     } else if (payment_status === "unpaid") {
       orderStatus = "pending"; // "À payer"
+    }
+
+    // Check if order already exists (e.g. created by /success sync)
+    const existingOrder = await client.fetch(
+      `*[_type == "order" && (stripeCheckoutSessionId == $id || orderNumber == $orderNumber)][0]`,
+      { id, orderNumber }
+    );
+
+    if (existingOrder) {
+      console.log("ℹ️ Order already exists in Sanity, skipping duplicate:", existingOrder._id);
+      return existingOrder;
     }
 
     // Create order in Sanity

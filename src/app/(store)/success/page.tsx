@@ -6,16 +6,21 @@ import Link from "next/link";
 import useBasketStore from "../store";
 import { CheckCircle2, Package, ShoppingBag, Sparkles } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
+import { syncOrderFromSession } from "../../../../actions/createCheckoutSession";
 
 function SuccessContent() {
   const searchParams = useSearchParams();
   const orderNumber = searchParams.get("orderNumber");
+  const sessionId = searchParams.get("session_id");
   const clearBasket = useBasketStore((state) => state.clearBasket);
   const { t } = useLanguage();
 
   useEffect(() => {
     if (orderNumber) clearBasket();
-  }, [orderNumber, clearBasket]);
+    if (sessionId) {
+      syncOrderFromSession(sessionId);
+    }
+  }, [orderNumber, sessionId, clearBasket]);
 
   return (
     <div className='min-h-[80vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8'>
