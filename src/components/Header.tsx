@@ -63,7 +63,7 @@ const Header = () => {
           href='/'
           className='flex items-center gap-2 group shrink-0'
         >
-          <div className='w-8 h-8 rounded-lg bg-slate-950 text-white flex items-center justify-center font-black text-lg tracking-tighter shadow-sm group-hover:scale-105 transition-transform duration-200'>
+          <div className='w-8 h-8 rounded-lg bg-slate-950 text-white flex items-center justify-center font-black text-lg tracking-tighter shadow-sm'>
             D
           </div>
           <span className='text-xl sm:text-2xl font-black tracking-tight text-slate-900'>
@@ -142,7 +142,7 @@ const Header = () => {
                   title={user.firstName || user.fullName || ""}
                 >
                   <p className='text-slate-400 font-medium group-hover/user:text-slate-600 transition-colors'>{t("welcome")}</p>
-                  <p className='font-semibold text-slate-800 group-hover/user:text-slate-950 transition-colors truncate max-w-[100px]'>
+                  <p className='font-semibold text-slate-800 group-hover/user:text-slate-950 transition-colors truncate max-w-25'>
                     {user.firstName || user.fullName}
                   </p>
                 </button>
