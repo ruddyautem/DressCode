@@ -55,6 +55,10 @@ export const orderType = defineType({
         defineArrayMember({
           type: "object",
           fields: [
+            defineField({name:"size",title:"Taille",type:"string"}),
+            defineField({name:"unitPrice",title:"Prix à l’achat",type:"number"}),
+            defineField({name:"productName",title:"Nom à l’achat",type:"string"}),
+            defineField({name:"imageUrl",title:"Image à l’achat",type:"url"}),
             defineField({
               name: "product",
               title: "Product Bought",

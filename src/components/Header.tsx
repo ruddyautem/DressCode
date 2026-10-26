@@ -87,7 +87,7 @@ const Header = () => {
           </div>
         </Form>
 
-        {/* Section utilisateur, panier & langue */}
+        {/* Actions : langue, panier, puis profil */}
         <div className='flex items-center gap-2 sm:gap-3 shrink-0'>
           {/* Recherche Desktop/Tablette uniquement (caché sur mobile) */}
           <Link
@@ -97,6 +97,8 @@ const Header = () => {
           >
             <Search className='w-5 h-5' />
           </Link>
+
+          <LanguageSwitch />
 
           {/* Panier : icône uniquement avec badge rouge/corail élégant, juste à côté du compte */}
           <Link
@@ -168,8 +170,6 @@ const Header = () => {
             )}
           </ClerkLoaded>
 
-          {/* Switch de langue FR / EN : Placé tout à droite sans bordure */}
-          <LanguageSwitch />
         </div>
 
       </div>

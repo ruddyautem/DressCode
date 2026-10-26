@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, Suspense } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import useBasketStore from "../store";
@@ -10,17 +10,24 @@ import { syncOrderFromSession } from "../../../../actions/createCheckoutSession"
 
 function SuccessContent() {
   const searchParams = useSearchParams();
-  const orderNumber = searchParams.get("orderNumber");
+  const [orderNumber, setOrderNumber] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const sessionId = searchParams.get("session_id");
-  const clearBasket = useBasketStore((state) => state.clearBasket);
+  const consumePaidSession = useBasketStore(state => state.consumePaidSession);
   const { t } = useLanguage();
 
   useEffect(() => {
-    if (orderNumber) clearBasket();
-    if (sessionId) {
-      syncOrderFromSession(sessionId);
-    }
-  }, [orderNumber, sessionId, clearBasket]);
+    let active = true;
+    if (!sessionId) { setError("Session de paiement manquante."); return; }
+    syncOrderFromSession(sessionId).then(result => {
+      if (!active) return;
+      if (!result.success) { setError(result.error); return; }
+      consumePaidSession(sessionId, result.purchased);
+      setOrderNumber(result.orderNumber);
+    }).catch(() => { if (active) setError("Vérification momentanément indisponible. Réessaie."); });
+    return () => { active = false; };
+  }, [sessionId, consumePaidSession]);
+  if (!orderNumber) return <div className='min-h-[80vh] flex items-center justify-center py-12 px-4'><div className='bg-white rounded-3xl border border-slate-200/80 shadow-xl max-w-lg w-full p-8 text-center'><p role={error ? "alert" : "status"}>{error || "Vérification du paiement…"}</p>{error && <Link href='/orders' className='block mt-6 underline'>{t("trackOrder")}</Link>}</div></div>;
 
   return (
     <div className='min-h-[80vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8'>

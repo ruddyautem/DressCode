@@ -62,7 +62,7 @@ L'application utilise **Zod** comme rempart de sécurité au moment de l'exécut
 | State Management | Zustand |
 | Validation de Données | Zod |
 | UI & Icônes | shadcn/ui, Lucide React |
-| Tests | Vitest + React Testing Library |
+| Tests | Bun (tests de régression du paiement) |
 
 ### 📁 Structure du projet
 
@@ -74,8 +74,8 @@ dresscode-ecommerce/
 ├── src/
 │   ├── app/
 │   │   ├── (store)/             # Ce que le client voit (Accueil, Panier, Commandes...)
-│   │   ├── api/
-│   │   │   └── webhook/         # Point d'entrée pour les événements Stripe
+│   │   ├── (store)/
+│   │   │   └── (store)/webhook/         # Point d'entrée pour les événements Stripe
 │   │   ├── studio/              # Le panneau d'administration Sanity
 │   │   ├── icon.svg             # Favicon SVG moderne Next.js
 │   │   └── globals.css          # Styles globaux et variables Tailwind v4
@@ -209,3 +209,8 @@ Then head to [http://localhost:3000](http://localhost:3000).
 ### About me
 
 I'm Ruddy Autem, a Full Stack developer. If the code speaks to you or you just want to say hi, feel free — you'll find me at [autem.dev](https://autem.dev) or on [GitHub](https://github.com/ruddyautem).
+
+
+## Paiements et validation
+
+Bun est le gestionnaire de paquets de référence (`bun install --frozen-lockfile`). Webhook Stripe : **`/webhook`** ; activer `checkout.session.completed` et `checkout.session.async_payment_succeeded`. Le serveur utilise les prix Sanity et l’identité Clerk. Les commandes ont un ID déterministe par session, conservent tailles et prix à l’achat. Le retour vérifie le paiement et retire seulement les quantités payées, une fois par navigateur. Utiliser un dataset Sanity privé pour les commandes et un jeton serveur autorisé en écriture ; vérifier cette configuration avant tout paiement réel. Ne jamais placer le jeton serveur dans une variable `NEXT_PUBLIC_*`.

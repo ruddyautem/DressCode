@@ -159,17 +159,17 @@ const BasketPage = () => {
         customerEmail: user?.emailAddresses[0].emailAddress ?? "Unknown",
         clerkUserId: user!.id,
       };
-      const checkoutUrl = await createCheckoutSession(
+      const checkout = await createCheckoutSession(
         groupedItems,
         metadata,
         language
       );
 
-      if (checkoutUrl) {
-        window.location.href = checkoutUrl;
-      }
+      useBasketStore.getState().rememberCheckout(checkout.sessionId);
+      window.location.href = checkout.url;
     } catch (error) {
       console.error("Error creating checkout session:", error);
+      toast.error(error instanceof Error ? error.message : "Paiement indisponible. Réessaie.");
     } finally {
       setIsLoading(false);
     }

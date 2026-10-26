@@ -171,7 +171,7 @@ export default function OrdersClient({ orders }: OrdersClientProps) {
                           </div>
                           <div>
                             <p className='font-bold text-sm text-slate-900'>
-                              {item.product?.name}
+                              {item.product?.name}{item.size ? ` · ${item.size}` : ""}
                             </p>
                             <p className='text-xs text-slate-500 mt-0.5'>
                               {t("quantity")} : {item.quantity ?? 1}

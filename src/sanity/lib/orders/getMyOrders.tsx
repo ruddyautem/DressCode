@@ -19,11 +19,12 @@ export const MY_ORDERS_QUERY = defineQuery(`
     products[] {
       _key,
       quantity,
+      size,
       "product": {
         "_id": product->_id,
-        "name": product->name,
-        "price": product->price,
-        "image": product->image.asset->url,
+        "name": coalesce(productName, product->name),
+        "price": coalesce(unitPrice, product->price),
+        "image": coalesce(imageUrl, product->image.asset->url),
         "slug": product->slug
       }
     }
@@ -37,7 +38,7 @@ export async function getMyOrders(
     throw new Error("User Id is required");
   }
 
-  console.log("🔍 Fetching orders for userId:", userId);
+
 
   try {
     const orders = await client.fetch(MY_ORDERS_QUERY, { userId });

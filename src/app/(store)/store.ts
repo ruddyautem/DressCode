@@ -14,6 +14,10 @@ interface BasketState {
   addMultipleItems: (product: Product, quantity: number, size?: string) => void;
   removeItem: (productId: string, size?: string) => void;
   removeMultipleItems: (itemsToRemove: Array<{ productId: string; size?: string }>) => void;
+  consumePaidSession: (sessionId: string, purchased: Array<{productId: string; size: string; quantity: number}>) => void;
+  processedSessions: string[];
+  pendingCheckoutIds: string[];
+  rememberCheckout: (sessionId: string) => void;
   clearBasket: () => void;
   getTotalPrice: () => number;
   getItemCount: (productId: string, size?: string) => number;
@@ -24,6 +28,16 @@ const useBasketStore = create<BasketState>()(
   persist(
     (set, get) => ({
       items: [],
+      processedSessions: [],
+      pendingCheckoutIds: [],
+      rememberCheckout: sessionId => set(state => ({ pendingCheckoutIds: [...new Set([...(state.pendingCheckoutIds ?? []), sessionId])] })),
+      consumePaidSession: (sessionId, purchased) => set(state => {
+        if (state.processedSessions?.includes(sessionId) || !state.pendingCheckoutIds?.includes(sessionId)) return state;
+        return { pendingCheckoutIds: state.pendingCheckoutIds.filter(id => id !== sessionId), processedSessions: [...(state.processedSessions ?? []), sessionId], items: state.items.map(item => {
+          const quantity = purchased.filter(p => p.productId === item.product._id && p.size === (item.size || "")).reduce((n,p) => n+p.quantity,0);
+          return {...item, quantity: Math.max(0,item.quantity-quantity)};
+        }).filter(item => item.quantity>0) };
+      }),
       
       addItem: (product, size) =>
         set((state) => {
